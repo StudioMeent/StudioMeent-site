@@ -3,6 +3,18 @@
 Newest first. Every change to the site gets an entry.
 (History before the Astro rebuild is in the CHANGELOG.md of the old `website/` folder.)
 
+## 2026-10-05 — BASE CHANGE (requested by Kaan): publish on GitHub Pages (test)
+
+- New `.github/workflows/deploy.yml`: builds the site and publishes `dist/` on GitHub Pages, only when started by hand (GitHub → Actions → Run workflow). Pushing does not publish.
+- New `public/CNAME`: `c-and.xyz` (test domain).
+- `astro.config.mjs`: `site` set to `https://c-and.xyz`.
+- Test setup: change `public/CNAME` and `site` once the real domain is chosen.
+
+## 2026-10-05 — Instructions: Claude never commits, pushes or pulls
+
+- `CLAUDE.md`: new hard rule 8. Commit, push and pull are always done by the person working on the site. Claude asks permission first, every time.
+- Base: not changed
+
 ## 2026-10-05 — BASE CHANGE (requested by Kaan): new site, rebuilt from scratch in Astro
 
 - New base: `astro.config.mjs`, `package.json`, `package-lock.json`, `.gitignore`, `src/layouts/Base.astro`, `src/pages/` (index, news, about, contact, 404), `src/styles/site.css`, `src/lib/projects.js`, `src/lib/url.js`, `src/integrations/folders.js`.
