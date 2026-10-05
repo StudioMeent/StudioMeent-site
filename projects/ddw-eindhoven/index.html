@@ -1,0 +1,274 @@
+<!doctype html>
+<!--
+  Project page: DDW Eindhoven (street section)
+  Self-contained: touches nothing in the site base. Only needs section.svg next to it.
+
+  Changelog
+  2026-10-01  Added to the website: site back button (top-left) replaces the header link;
+              footer link points to the Works page.
+  2026-09-30  Real text from the DDW panels added (title, intro, "Bouwen Bouwen Bouwen",
+              colofon). Typography and pink taken from the panels (Work Sans, #d2247d).
+              Page language set to Dutch.
+  2026-09-30  Page created. Text intro, then a pinned street section that moves
+              horizontally while scrolling down. Overview strip at the bottom
+              for jumping. Section SVG cropped to the drawing and optimised (12 MB → 4.5 MB).
+-->
+<html lang="nl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>De toekomst is al gebouwd! — Dutch Design Week 2025</title>
+<!-- Back to Studio Meent (base/back-button.js) -->
+<script src="../../base/back-button.js" data-position="top-left" defer></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Work+Sans:wght@500;600;700;900&display=swap" rel="stylesheet">
+<link rel="preload" as="image" href="section.svg">
+<style>
+  /* Tokens — colours are taken from the drawing itself */
+  :root{
+    --paper:#ffffff;
+    --ink:#d2247d;        /* the pink of the DDW panels */
+    --ink-soft:#b0407a;
+    --green:#08de6c;
+    --pink:#fe7383;
+    --yellow:#fff68a;
+    --grey:#d2d4d4;
+    --ground:#3c3c3b;
+    --font:"Work Sans", "Helvetica Neue", Arial, sans-serif;
+    --gutter:clamp(20px, 4vw, 56px);
+    --strip:64px;          /* height of the overview strip */
+    
+    box-sizing:border-box;
+    padding-top:env(safe-area-inset-top,0px);
+    padding-bottom:env(safe-area-inset-bottom,0px);
+  }
+  *,*::before,*::after{box-sizing:inherit}
+  html{scroll-padding-top:env(safe-area-inset-top,0px)}
+  body{margin:0;background:var(--paper);color:var(--ink);font-family:var(--font);
+       font-size:18px;line-height:1.5;-webkit-font-smoothing:antialiased}
+  a{color:inherit}
+  a:focus-visible,button:focus-visible,[tabindex]:focus-visible{outline:2px solid var(--pink);outline-offset:3px}
+
+  /* ---------- Header ---------- */
+  .top{display:flex;justify-content:space-between;align-items:baseline;min-height:70px;
+       padding:22px var(--gutter);font-size:15px}
+  .top a{text-decoration:none}
+  .top a:hover{text-decoration:underline;text-underline-offset:4px}
+
+  /* ---------- Intro text (follows the DDW panels) ---------- */
+  .intro{padding:clamp(40px,8vh,96px) var(--gutter) clamp(40px,8vh,96px);max-width:1500px;
+         hyphens:auto;-webkit-hyphens:auto}
+  h1{margin:0 0 clamp(32px,5vh,56px);font-weight:900;letter-spacing:-.035em;line-height:1.02;
+     font-size:clamp(46px,8.6vw,150px)}
+  h1 span{text-decoration:underline;text-decoration-thickness:.045em;text-underline-offset:.1em;
+          text-decoration-skip-ink:none}
+  .lead-row{display:grid;grid-template-columns:minmax(0,6fr) minmax(0,4fr);gap:40px var(--gutter);align-items:start}
+  .lead{margin:0;font-weight:700;font-size:clamp(20px,1.75vw,26px);line-height:1.34;max-width:40ch}
+  .facts{margin:0;font-size:15px;font-weight:500;display:grid;grid-template-columns:auto 1fr;gap:6px 20px;
+         border-top:2px solid var(--ink);padding-top:14px;hyphens:manual}
+  .facts dt{color:var(--ink-soft)}
+  .facts dd{margin:0}
+  h2{margin:clamp(56px,10vh,120px) 0 28px;font-weight:900;letter-spacing:-.04em;line-height:1;
+     font-size:clamp(34px,4.4vw,64px);text-decoration:underline;text-decoration-thickness:.07em;
+     text-underline-offset:-.14em;text-decoration-skip-ink:none}
+  .cols{columns:2 22em;column-gap:var(--gutter);max-width:1000px;font-weight:600;font-size:17px;line-height:1.42}
+  .cols p{margin:0 0 .8em;break-inside:avoid-column}
+  .cue{margin:clamp(32px,6vh,64px) 0 0;font-size:15px;font-weight:500;color:var(--ink-soft);
+       display:flex;align-items:center;gap:14px}
+  .cue::after{content:"";flex:0 0 72px;height:2px;background:var(--ink)}
+  @media (max-width:760px){ .lead-row{grid-template-columns:1fr} }
+
+  /* ---------- The section ---------- */
+  /* Without JS: a plain horizontally scrollable strip. */
+  .walk{position:relative}
+  .view{overflow-x:auto;overflow-y:hidden;background:var(--paper)}
+  .track{height:min(80vh,720px)}
+  .track img{display:block;height:100%;width:auto;max-width:none;user-select:none;-webkit-user-drag:none}
+  .strip{display:none}
+
+  /* With JS: pinned, and vertical scroll walks along the section. */
+  .js .view{position:sticky;top:0;height:100vh;height:100svh;overflow:hidden;
+            display:flex;flex-direction:column}
+  .js .track{flex:1;height:auto;min-height:0;position:relative;overflow:hidden}
+  .js .track img{position:absolute;left:0;top:50%;height:auto;will-change:transform}
+  .js .strip{display:flex;align-items:center;gap:var(--gutter);height:var(--strip);
+             padding:0 var(--gutter) env(safe-area-inset-bottom,0px);font-size:14px;color:var(--ink-soft)}
+
+  /* Overview: the whole section in miniature, with the part you see framed */
+  .mini{position:relative;flex:0 0 auto;height:40px;aspect-ratio:13614.3/2220;cursor:pointer;touch-action:none;margin-left:auto}
+  .mini img{display:block;width:100%;height:100%;opacity:.6}
+  .mini .frame{position:absolute;top:-3px;bottom:-3px;left:0;border:2px solid var(--pink);border-radius:2px;
+               pointer-events:none}
+  .count{min-width:4ch;font-variant-numeric:tabular-nums}
+
+  /* ---------- End ---------- */
+  .end{padding:clamp(56px,12vh,140px) var(--gutter) 64px;display:flex;justify-content:space-between;
+       align-items:baseline;flex-wrap:wrap;gap:20px;border-top:2px solid var(--ink)}
+  .end a{font-size:clamp(22px,2.4vw,32px);font-weight:500;text-decoration:none;letter-spacing:-.01em}
+  .end a:hover{text-decoration:underline;text-underline-offset:6px;text-decoration-thickness:2px}
+  .end small{font-size:14px;color:var(--ink-soft)}
+  .end .site{font-weight:900;letter-spacing:-.03em}
+</style>
+</head>
+<body>
+
+<header class="top">
+  <!-- the site's back button (top-left) sits here -->
+  <span style="margin-left:auto">Dutch Design Week 2025</span>
+</header>
+
+<main>
+  <section class="intro">
+    <h1><span>De</span> <span>toekomst</span> <span>is</span> <span>al</span> <span>gebouwd!</span></h1>
+
+    <div class="lead-row">
+      <p class="lead">Er is nog ruimte voor 4 miljoen extra woningen als we niet (of minder) slopen, als we inzetten op het ‘vinden’ van woningen binnen de bestaande voorraad gebouwen en als we de ruimte binnen onze bestaande wijken inzetten voor duurzame nieuwbouw! Denk aan strategieën als transformatie, woningdelen, optoppen, renovatie en verdichten.</p>
+
+      <dl class="facts">
+        <dt>Te zien op</dt><dd>Dutch Design Week, Eindhoven</dd>
+        <dt>Jaar</dt><dd>2025</dd>
+        <dt>Platform Woonopgave</dt><dd>Sanne van Manen, Agata Holdenmajer</dd>
+        <dt>Grafisch en 3D-ontwerp</dt><dd>Paul Swagerman</dd>
+        <dt>Gideonstribe</dt><dd>Marten Valk</dd>
+      </dl>
+    </div>
+
+    <h2>Bouwen Bouwen Bouwen</h2>
+    <div class="cols">
+      <p>De bouw kent de komende jaren veel bedreigingen. Stikstof zorgt nu al voor vertragingen. In 2027 komt de Europese richtlijn voor waterkwaliteit erbij (potentieel een acute bouwstop). Ook netcongestie en het tekort aan drinkwater gaan steeds vaker voor vertraging zorgen.</p>
+      <p>Daarnaast zijn de grenzen van de maakbaarheid van onze bodem bereikt, wat maakt dat 85% van de geplande woningbouw ligt op locaties die kwetsbaar zijn door klimaatverandering. Ook is het carbonbudget van de woningbouw bijna op. Dit is het budget aan CO₂-emissies dat nog uitgestoten kan worden binnen de afspraken van Parijs.</p>
+      <p>Kortom, enkel ‘bouwen, bouwen, bouwen’ gaat de wooncrisis niet oplossen, we hebben ook een andere aanpak nodig. Deze panelen tonen drie strategieën waarmee we met minder bouwen toch extra woningen kunnen toevoegen.</p>
+      <p>Waarom inzetten op bestaande bebouwing? Heel simpel: door woningen toe te voegen in bestaande context kan dit als hefboom fungeren om andere opgaven gelijktijdig aan te pakken. Denk aan het verduurzamen van bestaande woningen, extra maatregelen tegen hittestress, het veiliger maken van de openbare ruimte of het terugbrengen van voorzieningen in woonwijken. 1+1=3!</p>
+    </div>
+
+    <p class="cue">Scroll verder om door de straat te lopen</p>
+  </section>
+
+  <section class="walk" id="walk" aria-label="Straatprofiel">
+    <div class="view">
+      <div class="track" id="track" tabindex="0" aria-label="Straatprofiel, scroll om erlangs te bewegen">
+        <img id="section" src="section.svg" width="13614" height="2220" decoding="async"
+             alt="Een lang straatprofiel: roze, gele en grijze woongebouwen met tuinen en speelplekken op de daken, bomen ertussen en mensen op straat. Aan het eind loopt de straat af naar het water.">
+      </div>
+      <div class="strip" aria-hidden="true">
+        <span class="count" id="count">0%</span>
+        <div class="mini" id="mini">
+          <img src="section.svg" alt="">
+          <div class="frame" id="frame"></div>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer class="end">
+  <a href="../../index.html#works">Terug naar projecten</a>
+  <a class="site" href="https://platformwoonopgave.nl">platformwoonopgave.nl</a>
+</footer>
+
+<script>
+(function(){
+  document.documentElement.classList.add('js');
+  const RATIO = 13614.3 / 2220;   // section.svg viewBox width / height
+  const walk  = document.getElementById('walk');
+  const track = document.getElementById('track');
+  const img   = document.getElementById('section');
+  const mini  = document.getElementById('mini');
+  const frame = document.getElementById('frame');
+  const count = document.getElementById('count');
+  let w = 0, h = 0, dist = 0, vw = 0;
+
+  function layout(){
+    vw = track.clientWidth;
+    h  = track.clientHeight;
+    w  = h * RATIO;
+    // On very wide, short screens keep the whole height visible but never narrower than the screen
+    if (w < vw) { w = vw; h = w / RATIO; }
+    img.style.width  = w + 'px';
+    img.style.height = h + 'px';
+    img.style.marginTop = (-h/2) + 'px';
+    dist = Math.max(0, w - vw);
+    walk.style.height = (walk.firstElementChild.clientHeight + dist) + 'px';
+    frame.style.width = (vw / w * 100) + '%';
+    update();
+  }
+
+  function progress(){
+    if (!dist) return 0;
+    const p = -walk.getBoundingClientRect().top / dist;
+    return Math.min(1, Math.max(0, p));
+  }
+
+  let ticking = false;
+  function update(){
+    ticking = false;
+    const p = progress();
+    img.style.transform = 'translate3d(' + (-p * dist) + 'px,0,0)';
+    frame.style.left = (p * (1 - vw / w) * 100) + '%';
+    count.textContent = Math.round(p * 100) + '%';
+  }
+  function request(){ if (!ticking){ ticking = true; requestAnimationFrame(update); } }
+
+  function walkTop(){ return walk.getBoundingClientRect().top + window.scrollY; }
+  function goTo(p, smooth){
+    window.scrollTo({ top: walkTop() + p * dist, behavior: smooth ? 'smooth' : 'auto' });
+  }
+  function pinned(){
+    const r = walk.getBoundingClientRect();
+    return r.top <= 1 && r.bottom >= window.innerHeight - 1;
+  }
+
+  // Horizontal trackpad swipes move along the section too
+  window.addEventListener('wheel', e => {
+    if (Math.abs(e.deltaX) > Math.abs(e.deltaY) && pinned()){
+      e.preventDefault();
+      window.scrollBy(0, e.deltaX);
+    }
+  }, { passive:false });
+
+  // Sideways swipes on touch screens
+  let tx = null, ty = null, horizontal = null;
+  track.addEventListener('touchstart', e => { tx = e.touches[0].clientX; ty = e.touches[0].clientY; horizontal = null; }, { passive:true });
+  track.addEventListener('touchmove', e => {
+    if (tx === null) return;
+    const dx = e.touches[0].clientX - tx, dy = e.touches[0].clientY - ty;
+    if (horizontal === null && (Math.abs(dx) > 6 || Math.abs(dy) > 6)) horizontal = Math.abs(dx) > Math.abs(dy);
+    if (horizontal){
+      e.preventDefault();
+      window.scrollBy(0, -dx);
+      tx = e.touches[0].clientX; ty = e.touches[0].clientY;
+    }
+  }, { passive:false });
+  track.addEventListener('touchend', () => { tx = null; }, { passive:true });
+
+  // Arrow keys when the section has focus
+  track.addEventListener('keydown', e => {
+    const step = vw * 0.6;
+    if (e.key === 'ArrowRight'){ e.preventDefault(); window.scrollBy({ top: step, behavior:'smooth' }); }
+    if (e.key === 'ArrowLeft'){ e.preventDefault(); window.scrollBy({ top: -step, behavior:'smooth' }); }
+  });
+
+  // Click or drag in the overview to jump
+  function fromMini(e){
+    const r = mini.getBoundingClientRect();
+    const f = vw / w;                         // share of the section visible
+    const x = (e.clientX - r.left) / r.width; // where you pointed
+    return Math.min(1, Math.max(0, (x - f/2) / (1 - f)));
+  }
+  mini.addEventListener('pointerdown', e => {
+    mini.setPointerCapture(e.pointerId);
+    goTo(fromMini(e), true);
+    const move = ev => goTo(fromMini(ev), false);
+    const up = () => { mini.removeEventListener('pointermove', move); mini.removeEventListener('pointerup', up); };
+    mini.addEventListener('pointermove', move);
+    mini.addEventListener('pointerup', up);
+  });
+
+  window.addEventListener('scroll', request, { passive:true });
+  window.addEventListener('resize', layout);
+  layout();
+})();
+</script>
+</body>
+</html>

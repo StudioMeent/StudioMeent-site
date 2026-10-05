@@ -1,0 +1,120 @@
+/* Studio Meent — build step (BASE: don't change unless asked).
+
+   Reads every project folder in /projects, checks it, and writes
+   projects/projects.js — the list the Works grid and the project info box use.
+
+   Run it from the website folder:   node build.js
+   (Later, the hosting service runs this automatically on every push.)
+
+   Folders starting with _ or . are skipped (e.g. _template).
+   Errors = the project is left out of the site until fixed.
+   Warnings = the project is included, but something should be checked. */
+
+const fs = require("fs");
+const path = require("path");
+const vm = require("vm");
+
+const ROOT = __dirname;
+const PROJECTS_DIR = path.join(ROOT, "projects");
+const OUT = path.join(PROJECTS_DIR, "projects.js");
+const BACK_BUTTON = "base/back-button.js";
+const MAX_THUMB_KB = 400;
+
+// Read the filter words from content.js so categories can be checked.
+let categories = [];
+try {
+  const ctx = {};
+  vm.runInNewContext(fs.readFileSync(path.join(ROOT, "content.js"), "utf8") + "\n;this.SITE = SITE;", ctx);
+  categories = ctx.SITE.categories || [];
+} catch (e) {
+  console.warn("! Could not read categories from content.js:", e.message);
+}
+
+const projects = [];
+let errorCount = 0, warnCount = 0;
+
+const folders = fs.readdirSync(PROJECTS_DIR, { withFileTypes: true })
+  .filter(d => d.isDirectory() && !d.name.startsWith("_") && !d.name.startsWith("."))
+  .map(d => d.name)
+  .sort();
+
+for (const slug of folders) {
+  const dir = path.join(PROJECTS_DIR, slug);
+  const errors = [], warnings = [];
+  const has = f => fs.existsSync(path.join(dir, f));
+
+  if (!/^[a-z0-9]+(-[a-z0-9]+)*$/.test(slug))
+    errors.push(`folder name "${slug}" should be lowercase letters, numbers and hyphens only (e.g. "my-project")`);
+  if (!has("index.html")) errors.push("index.html is missing");
+
+  let info = null;
+  if (!has("info.json")) errors.push("info.json is missing");
+  else {
+    try { info = JSON.parse(fs.readFileSync(path.join(dir, "info.json"), "utf8")); }
+    catch (e) { errors.push(`info.json is not valid JSON (${e.message})`); }
+  }
+
+  if (info) {
+    if (!info.title) errors.push('info.json: "title" is missing');
+    if (!Number.isInteger(info.year)) errors.push('info.json: "year" should be a number, e.g. 2025');
+    if (!Array.isArray(info.categories) || !info.categories.length)
+      errors.push('info.json: "categories" should be a list, e.g. ["Onderzoek"]');
+    else {
+      const unknown = info.categories.filter(c => !categories.includes(c));
+      if (categories.length && unknown.length)
+        warnings.push(`category ${unknown.map(c => `"${c}"`).join(", ")} is not one of the filter words in content.js (${categories.join(", ")})`);
+    }
+    const thumb = info.thumbnail || "thumbnail.jpg";
+    if (!has(thumb)) errors.push(`thumbnail "${thumb}" is missing`);
+    else {
+      const kb = fs.statSync(path.join(dir, thumb)).size / 1024;
+      if (kb > MAX_THUMB_KB) warnings.push(`thumbnail is ${Math.round(kb)} KB; keep it under ${MAX_THUMB_KB} KB so the grid loads fast`);
+    }
+    if (!info.place) warnings.push('info.json: "place" is empty');
+    if (info.downloads !== undefined) {
+      if (!Array.isArray(info.downloads)) errors.push('info.json: "downloads" should be a list, e.g. [{"label": "Boek (PDF)", "file": "boek.pdf"}]');
+      else for (const d of info.downloads)
+        if (!d || !d.file) warnings.push('info.json: a download has no "file"');
+        else if (!/^https?:/.test(d.file) && !has(d.file)) warnings.push(`download "${d.file}" is not in the folder yet (the button will not work until it is)`);
+    }
+    if (info.color && !/^#[0-9a-fA-F]{6}$/.test(info.color)) warnings.push('info.json: "color" should look like "#1f9945"');
+  }
+
+  if (has("index.html") && !fs.readFileSync(path.join(dir, "index.html"), "utf8").includes(BACK_BUTTON))
+    warnings.push(`index.html doesn't load the back button (add: <script src="../../${BACK_BUTTON}" defer></script>)`);
+
+  for (const w of warnings) console.warn(`  warning  ${slug}: ${w}`);
+  for (const e of errors) console.error(`  ERROR    ${slug}: ${e}`);
+  warnCount += warnings.length;
+
+  if (errors.length) { errorCount += errors.length; console.error(`  → "${slug}" is left out until fixed.`); continue; }
+
+  projects.push({
+    slug,
+    title: info.title,
+    year: info.year,
+    categories: info.categories,
+    place: info.place || "",
+    client: info.client || "",
+    color: info.color || "",
+    summary: info.summary || "",
+    downloads: (Array.isArray(info.downloads) ? info.downloads : []).filter(d => d && d.file)
+      .map(d => ({ label: d.label || "Download", file: /^https?:/.test(d.file) ? d.file : `projects/${slug}/${d.file}` })),
+    url: `projects/${slug}/index.html`,
+    thumbnail: `projects/${slug}/${info.thumbnail || "thumbnail.jpg"}`,
+  });
+}
+
+// Newest first, then alphabetical.
+projects.sort((a, b) => b.year - a.year || a.title.localeCompare(b.title));
+
+fs.writeFileSync(OUT,
+`/* GENERATED by build.js on ${new Date().toISOString().slice(0, 10)} — don't edit by hand.
+   To change a project, edit its info.json and run: node build.js */
+window.PROJECTS = ${JSON.stringify(projects, null, 2)};
+`);
+
+console.log(`\nBuilt projects/projects.js: ${projects.length} project${projects.length === 1 ? "" : "s"}` +
+  `${warnCount ? `, ${warnCount} warning${warnCount === 1 ? "" : "s"}` : ""}` +
+  `${errorCount ? `, ${errorCount} error${errorCount === 1 ? "" : "s"}` : ""}.`);
+projects.forEach(p => console.log(`  ✓ ${p.slug}  (${p.title}, ${p.year})`));
