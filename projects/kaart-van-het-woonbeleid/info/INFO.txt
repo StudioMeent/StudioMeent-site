@@ -1,0 +1,22 @@
+# INFO — wat de Werk-pagina en het infovak van dit project laten zien.
+# Vul in achter de dubbele punt. Laat leeg wat er niet is; dat wordt dan niet getoond.
+# Regels die met # beginnen worden overgeslagen.
+
+Titel: Kaart van het Woonbeleid
+Jaar: 2026
+Opdrachtgever: 
+Locatie: Nederland
+
+# Kies uit: Architectuur, Stedenbouw, Onderzoek, Gebouwd, Tentoonstelling, Publicatie, Installatie
+# Meerdere? Zet er een komma tussen.
+Categorie: Onderzoek
+
+# Hoofdkleur van het project (tekst en rand van het infovak), zoals #1f9945
+Kleur: #231f20
+
+# Eén zin over het project
+Samenvatting: Een overzicht van alle wetten en regels die raken aan de brede woonopgave in Nederland, met een rondleiding in het Nederlands en Engels.
+
+# Eén regel per bestand uit de map downloads/:  bestandsnaam = tekst op de knop
+# Bijvoorbeeld:  boek.pdf = Volledig boek (PDF, 12 MB)
+Downloads:

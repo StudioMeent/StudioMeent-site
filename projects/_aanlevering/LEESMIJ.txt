@@ -1,0 +1,33 @@
+NIEUW PROJECT AANLEVEREN — Studio Meent
+=======================================
+
+1. Kopieer deze hele map (_aanlevering) en geef de kopie de naam van het project:
+   kleine letters, cijfers en streepjes, geen spaties. Bijvoorbeeld: goed-wonen-in-de-binnenstad
+
+2. Vul de map info/ in:
+   - INFO.txt          open met TextEdit en vul in (titel, jaar, opdrachtgever, locatie,
+                       categorie, kleur, samenvatting, downloads). Er staat een voorbeeld in.
+   - thumbnail.jpg     vervang door het beeld voor het overzicht op de Werk-pagina:
+                       vierkant, kleiner dan 400 KB (.jpg, .png of .webp)
+   - downloads/        zet hier de bestanden die mensen kunnen downloaden (PDF enz.)
+                       en zet ze in INFO.txt onder "Downloads", met de tekst voor de knop
+
+3. Zet de webpagina in de map pagina/:
+   - het startbestand heet index.html
+   - alles wat de pagina gebruikt (beelden, css, js, data) staat in pagina/,
+     gelinkt met relatieve paden: images/foto.jpg, niet /images/foto.jpg of /Users/...
+   - lettertypes en bibliotheken van een CDN mogen
+   - gemaakt met een tool of framework? Lever de geëxporteerde/gebouwde versie aan
+   - deze regel moet in de <head> van index.html blijven staan (de ← MEENT-knop en het infovak):
+       <script src="../../base/back-button.js" data-position="bottom-left" defer></script>
+     Kies de hoeken zo dat ze niet over vaste onderdelen van de pagina vallen:
+       data-position = hoek van de ← MEENT-knop: bottom-left, bottom-right, top-left, top-right
+       data-info     = hoek van het infovak (standaard top-right), of none voor geen infovak
+   - nog geen pagina? Laat de voorbeeldpagina staan of zet het materiaal erin;
+     dan wordt de pagina later gebouwd.
+
+4. Zet de map in projects/ (naast de andere projecten). Het project staat dan op de
+   Werk-pagina. Map eruit halen = project weg.
+
+Deze map (_aanlevering) zelf wordt nooit gepubliceerd: mappen die met _ beginnen worden overgeslagen.
+LEESMIJ.txt en INFO.txt komen ook niet online; alleen pagina/, de thumbnail en de downloads.

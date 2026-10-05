@@ -7,7 +7,7 @@ Built with [Astro](https://astro.build). The result is a plain static website: n
 ```
 website-astro/
 ├── projects/         One folder per project. Drag a folder in, and it's on the site.
-│   └── _template/    Starting point for a new project (not published)
+│   └── _aanlevering/ Template for a new project: copy it (not published)
 ├── news/             News items that need their own page (one folder each)
 ├── content.js        Site texts: news, about, contact, filter words, team photos
 ├── public/base/      BASE: back-button.js, reset.css, images/
@@ -39,10 +39,10 @@ Stop with Ctrl+C (or `npx astro dev stop`).
 
 ## Adding a project
 
-1. Drag a finished project folder into `projects/`, or copy `projects/_template` and rename the copy
-   (lowercase, hyphens, no spaces, e.g. `my-project`).
-2. Fill in `info.json` and replace `thumbnail.jpg` (square, under ~400 KB).
-3. Build the page in `index.html` in any design. Keep the back-button line in the `<head>`.
+1. Copy `projects/_aanlevering` and rename the copy (lowercase, hyphens, no spaces, e.g. `my-project`).
+   Its `LEESMIJ.txt` explains everything.
+2. `info/`: fill in `INFO.txt`, replace `thumbnail.jpg` (square, under ~400 KB), put downloads in `downloads/`.
+3. `pagina/`: the page itself, `index.html` plus its files, in any design. Keep the back-button line in the `<head>`.
 4. It appears in the Works grid immediately. The terminal running `npm run dev` says if something is missing.
 5. Add a line to `CHANGELOG.md`, then commit and push.
 
@@ -51,8 +51,8 @@ Stop with Ctrl+C (or `npx astro dev stop`).
 ## Editing texts
 
 - News, About, Contact, filter words: `content.js`
-- A project's title, year, categories, place: that project's `info.json`
-- A project's page: that project's own folder
+- A project's title, year, client, place, categories, colour, downloads: that project's `info/INFO.txt`
+- A project's page: that project's `pagina/` folder
 
 ## Publishing
 

@@ -3,6 +3,17 @@
 Newest first. Every change to the site gets an entry.
 (History before the Astro rebuild is in the CHANGELOG.md of the old `website/` folder.)
 
+## 2026-10-05 — BASE CHANGE (requested by Kaan): project folders split into info/ and pagina/
+
+- New structure for every project: `info/` (`INFO.txt` form, `thumbnail.jpg`, `downloads/`) and `pagina/` (the page). Made so people without VS Code can supply a project. Page addresses stay the same (`/projects/<folder>/`).
+- `src/lib/projects.js`: reads `info/INFO.txt` instead of `info.json`; checks the new layout; makes the info-box data (`infoJson`).
+- `src/integrations/folders.js`: serves `pagina/` at `/projects/<folder>/`, `info/` at `/projects/<folder>/info/` and a generated `info.json`; on build copies only `pagina/`, the thumbnail and downloads (not `INFO.txt`) and writes `info.json`.
+- `public/base/back-button.js`: not changed (still reads `info.json` next to the page).
+- `CLAUDE.md`, `README.md`: describe the new structure.
+- `projects/_template/` → `projects/_aanlevering/` with the new structure, a filled-in example `INFO.txt` and `LEESMIJ.txt` (instructions in Dutch).
+- Moved, contents unchanged: beter-benutten-bestaande-rijtjeswoningen, cooperatieve-kansenkaart, ddw-eindhoven, goed-wonen-in-de-binnenstad, kaart-van-het-woonbeleid (page files → `pagina/`, `thumbnail.jpg` → `info/`, `info.json` → `info/INFO.txt` with the same values).
+- Still known: `beter-benutten-bestaande-rijtjeswoningen` lists a PDF that isn't there yet; it goes in `info/downloads/`.
+
 ## 2026-10-05 — BASE CHANGE (requested by Kaan): publish on GitHub Pages (test)
 
 - New `.github/workflows/deploy.yml`: builds the site and publishes `dist/` on GitHub Pages, only when started by hand (GitHub → Actions → Run workflow). Pushing does not publish.

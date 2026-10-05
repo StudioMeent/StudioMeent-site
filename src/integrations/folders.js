@@ -5,12 +5,16 @@
    - while developing (npm run dev) they are served exactly as they are, and the
      browser reloads when a folder is added, removed or changed;
    - when building (npm run build) they are copied as they are into the finished site.
-   Folders starting with _ or . are not published (e.g. _template). */
+   A project folder has two parts (see src/lib/projects.js), served at one address:
+     /projects/<folder>/…           ← projects/<folder>/pagina/…
+     /projects/<folder>/info/…      ← projects/<folder>/info/… (thumbnail, downloads; not INFO.txt)
+     /projects/<folder>/info.json   ← made from projects/<folder>/info/INFO.txt, for the info box
+   Folders starting with _ or . are not published (e.g. _aanlevering). */
 
 import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
-import { reportProjects } from "../lib/projects.js";
+import { reportProjects, infoJson } from "../lib/projects.js";
 
 const FOLDERS = ["projects", "news"];
 
@@ -26,6 +30,17 @@ const TYPES = {
   ".woff": "font/woff", ".woff2": "font/woff2", ".ttf": "font/ttf", ".otf": "font/otf",
   ".glb": "model/gltf-binary", ".gltf": "model/gltf+json",
 };
+
+// /projects/<folder>/… → { json } for info.json, a file path, or null (not served).
+function projectFile(base, rel) {
+  const [slug, ...rest] = rel.split("/");
+  const sub = rest.join("/");
+  if (sub === "info.json") return { json: infoJson(slug, path.join(base, slug)) };
+  if (sub === "info/INFO.txt") return null;
+  return path.join(base, slug, sub.startsWith("info/") ? "" : "pagina", sub);
+}
+
+const noDotFiles = f => !path.basename(f).startsWith(".");
 
 function serveFile(req, res, file) {
   const size = fs.statSync(file).size;
@@ -67,8 +82,15 @@ export default function folders() {
           const name = FOLDERS.find(f => url.startsWith(`/${f}/`) && url.length > f.length + 2);
           if (!name) return next();
           const base = path.join(root, name);
-          let file = path.join(base, url.slice(name.length + 2));
-          if (!file.startsWith(base + path.sep)) return next();
+          const rel = url.slice(name.length + 2);
+          let file = name === "projects" ? projectFile(base, rel) : path.join(base, rel);
+          if (file && typeof file === "object") {
+            if (!file.json) return next();
+            res.setHeader("Content-Type", TYPES[".json"]);
+            res.setHeader("Cache-Control", "no-cache");
+            return res.end(JSON.stringify(file.json));
+          }
+          if (!file || !file.startsWith(base + path.sep)) return next();
 
           let stat;
           try { stat = fs.statSync(file); } catch { return next(); }
@@ -104,10 +126,17 @@ export default function folders() {
           if (!fs.existsSync(src)) continue;
           for (const d of fs.readdirSync(src, { withFileTypes: true })) {
             if (!d.isDirectory() || /^[_.]/.test(d.name)) continue;
-            fs.cpSync(path.join(src, d.name), path.join(out, name, d.name), {
-              recursive: true,
-              filter: f => !path.basename(f).startsWith("."),
-            });
+            const from = path.join(src, d.name), to = path.join(out, name, d.name);
+            if (name !== "projects") { fs.cpSync(from, to, { recursive: true, filter: noDotFiles }); continue; }
+            if (!fs.existsSync(path.join(from, "pagina"))) continue;
+            fs.cpSync(path.join(from, "pagina"), to, { recursive: true, filter: noDotFiles });
+            if (fs.existsSync(path.join(from, "info")))
+              fs.cpSync(path.join(from, "info"), path.join(to, "info"), {
+                recursive: true,
+                filter: f => noDotFiles(f) && f !== path.join(from, "info", "INFO.txt"),
+              });
+            const info = infoJson(d.name, from);
+            if (info) fs.writeFileSync(path.join(to, "info.json"), JSON.stringify(info, null, 2));
           }
           logger.info(`copied /${name}`);
         }

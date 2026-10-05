@@ -20,8 +20,8 @@ News items that need their own page live in `news/<folder>/` (self-contained, li
 
 How it works (for orientation; this is base code):
 - `src/lib/projects.js` reads and checks every folder in `projects/` each time the Works page renders.
-- `src/integrations/folders.js` serves `projects/` and `news/` as-is in `npm run dev`, reloads the browser when they change, and copies them into `dist/` on `npm run build`. Folders starting with `_` or `.` are never published.
-- `public/base/back-button.js` adds the ← MEENT button and the info box to project pages. The info box reads the project's own `info.json`.
+- `src/integrations/folders.js` serves `projects/` and `news/` in `npm run dev`, reloads the browser when they change, and copies them into `dist/` on `npm run build`. A project's `pagina/` is served at `/projects/<folder>/`, its `info/` at `/projects/<folder>/info/`, and `/projects/<folder>/info.json` is made from `info/INFO.txt`. Folders starting with `_` or `.` are never published.
+- `public/base/back-button.js` adds the ← MEENT button and the info box to project pages. The info box reads `info.json` next to the page (made from `INFO.txt`).
 
 ## Hard rules
 
@@ -38,28 +38,32 @@ How it works (for orientation; this is base code):
 
 ```
 projects/my-project/          ← lowercase, hyphens, no spaces
-├── index.html                ← the page; any design
-├── info.json                 ← title, year, categories, place, client, summary, color, downloads, thumbnail
-├── thumbnail.jpg             ← square image for the grid, max ~400 KB
-└── …                         ← everything else the page uses (images/, scripts, data)
+├── LEESMIJ.txt               ← optional; instructions from the template (not published)
+├── info/                     ← what the Works grid and the info box show
+│   ├── INFO.txt              ← Titel, Jaar, Opdrachtgever, Locatie, Categorie, Kleur, Samenvatting, Downloads (not published)
+│   ├── thumbnail.jpg         ← square image for the grid, max ~400 KB (.jpg, .png or .webp)
+│   └── downloads/            ← files offered in the info box, listed in INFO.txt
+└── pagina/                   ← the page: index.html + everything it uses (images/, scripts, data); any design
 ```
 
-- Start from `projects/_template/` (copy it, rename the copy).
-- The project must be **self-contained**: every file it uses lives inside its own folder, with relative paths. External fonts/libraries from a CDN are fine. Never reference files outside the folder other than `../../base/`.
-- `index.html` **must** load the back button in its `<head>`:
+The folder is made so people without VS Code can supply a project: copy the folder, fill in `INFO.txt` in TextEdit, drop files in. The page is usually built separately and delivered as `pagina/`.
+
+- Start from `projects/_aanlevering/` (copy it, rename the copy). Its `LEESMIJ.txt` explains it in Dutch for suppliers.
+- The page must be **self-contained**: every file it uses lives inside `pagina/`, with relative paths. External fonts/libraries from a CDN are fine. Never reference files outside it other than `../../base/` (and `info/…` for the project's own downloads). Don't name anything in `pagina/` `info` or `info.json`; those addresses belong to the info box.
+- `pagina/index.html` **must** load the back button in its `<head>`:
   `<script src="../../base/back-button.js" data-position="bottom-left" defer></script>`
   Choose the corner (`bottom-left`, `bottom-right`, `top-left`, `top-right`) so it doesn't collide with the project's own fixed/sticky elements.
 - Optionally link `base/reset.css` for shared utilities: `<link rel="stylesheet" href="../../base/reset.css">`. Provides safe-area insets, box-sizing, and accessibility defaults. Remove if it conflicts with your design.
-- The same script shows the floating **info box** (year, client, place, categories, downloads) in `data-info="top-right"` (default; also the other corners, or `none`), and optionally `data-info-phone="…"` for phones. It reads the project's `info.json` directly.
-  - `color`: text and frame colour of the info box. Use the project's main colour (e.g. `"#1f9945"`).
-  - `downloads`: `[{ "label": "Volledig boek (PDF)", "file": "boek.pdf" }]`, files inside the project folder.
-- `info.json` categories must be one of the filter words in `content.js` (`categories`).
+- The same script shows the floating **info box** (year, client, place, categories, downloads) in `data-info="top-right"` (default; also the other corners, or `none`), and optionally `data-info-phone="…"` for phones. Its content comes from `info/INFO.txt`:
+  - `Kleur`: text and frame colour of the info box. Use the project's main colour (e.g. `#1f9945`).
+  - `Downloads`: one line per file in `info/downloads/`: `boek.pdf = Volledig boek (PDF, 12 MB)`.
+- `Categorie` must be one or more of the filter words in `content.js` (`categories`), separated by commas.
 - Keep original/high-res source material out of the site; put web-ready images only.
 
 ## Adding a project — checklist
 
 1. Folder in `projects/`, valid name, from the template or dropped in by Kaan.
-2. `info.json` complete; thumbnail present and small.
+2. `info/INFO.txt` complete; `info/thumbnail.jpg` present and small; downloads in `info/downloads/` and listed.
 3. Back-button line present, corner chosen.
 4. Works on phone (~390 px), tablet (~800 px) and desktop (~1280 px+). No hover-only content; tap targets ≥ 44 px; images not oversized.
 5. Run `npm run build`. It must finish without errors; resolve or report the project warnings it prints.
