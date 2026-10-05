@@ -2,6 +2,17 @@
 
 Newest first. Every change to the site gets an entry.
 
+## 2026-10-05 — BASE CHANGE (requested by Kaan): news as markdown files (Astro content collection)
+
+- New: `src/content/news/*.md` — the six news items, one file each (same titles, dates, texts, images and links; "controleer" kept as a comment after the date). File names = the existing page addresses, so no URLs changed.
+- New: `src/content.config.js` — defines the `news` collection and its fields.
+- New: `tsconfig.json` — Astro's standard settings, so the editor understands `.astro` files.
+- Changed: `src/content.js` — `news` removed (moved to the markdown files); comments updated.
+- Changed: `src/lib/site.js` — `getNews()` (newest first, by date) and `formatDate()` replace the old news list.
+- Changed: `src/pages/news/index.astro`, `src/pages/news/[slug].astro`, `src/pages/index.astro` — read the collection.
+- Changed: `README.md` (how to add news), `CLAUDE.md`.
+- News is now sorted by `date` instead of by position in the file.
+
 ## 2026-10-05 — BASE CHANGE (requested by Kaan): site rebuilt with Astro
 
 - New: `package.json`, `package-lock.json`, `astro.config.mjs` — Astro 7. Preview with `npm run dev`, build with `npm run build` (output in `dist/`).

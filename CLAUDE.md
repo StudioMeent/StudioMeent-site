@@ -10,13 +10,13 @@ Studio Meent is an architecture research office. The site is built with **Astro*
 
 | Zone | Files | Rule |
 |---|---|---|
-| **Base** | `src/` (pages/, layouts/, styles/, lib/), `public/base/` (back-button.js, reset.css, images/), `astro.config.mjs`, `package.json` | **Never change unless Kaan explicitly asks for a base change.** |
-| **Site texts** | `src/content.js` (news, about, contact, filter words, team) | Change only when asked to edit those texts. |
+| **Base** | `src/` (pages/, layouts/, styles/, lib/, content.config.js), `public/base/` (back-button.js, reset.css, images/), `astro.config.mjs`, `package.json` | **Never change unless Kaan explicitly asks for a base change.** |
+| **Site texts** | `src/content.js` (about, contact, filter words, team), `src/content/news/*.md` (one file per news item) | Change only when asked to edit those texts. |
 | **Projects** | `public/projects/<folder>/` | Where almost all work happens. One folder per project. Plain HTML, copied to the site as-is. |
 
 `/projects/projects.js` is generated at build time by `src/pages/projects/projects.js.js` (from every `info.json`). There is no file to edit or commit.
 
-News items that need their own page live in `public/news/<folder>/` (self-contained, like a project folder) and are linked from the news item in `src/content.js` (`link`, `linkLabel`, `image`). Paths in `content.js` and `info.json` are relative to the site root (`projects/x/index.html`).
+News items are markdown files in `src/content/news/` (frontmatter: `title`, `date` as YYYY-MM-DD, optional `image`, `link`, `linkLabel`; the body is the text). The file name is the URL (`/news/<file-name>/`) — don't rename existing files, it breaks links. News items that need their own designed page live in `public/news/<folder>/` (self-contained, like a project folder) and are linked from the markdown file (`link`). Paths in news files, `content.js` and `info.json` are relative to the site root (`projects/x/index.html`).
 
 ## Hard rules
 

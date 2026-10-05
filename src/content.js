@@ -1,13 +1,13 @@
 /* =====================================================================
    STUDIO MEENT — SITE TEXTS
-   News, About, Contact and the filter words. Edit, save, refresh.
+   About, Contact, team and the filter words. Edit, save, refresh.
    Projects live in their own folders in /public/projects (see README.md).
 
    Tips
    - Keep the quotes "..." and the commas at the end of each line.
    - Text may contain simple HTML: <em>italic</em>, <strong>bold</strong>,
      <a href="https://...">link</a>, <br> for a line break.
-   - Images for news etc. go in /base/images; refer to them as "base/images/name.jpg".
+   - Images go in /public/base/images; refer to them as "base/images/name.jpg".
    ===================================================================== */
 
 export const SITE = {
@@ -19,78 +19,7 @@ export const SITE = {
   // Each project is its own folder in /public/projects with an info.json.
   // The build (npm run build) turns those into the Works grid automatically.
 
-  // ----------------------------------------------------------------- NEWS
-  // Newest first. text = one entry per paragraph.
-  news: [
-    // Newest first. Every item is shown in full on the News page (blog).
-    //   date:  "dd/mm/jjjj"
-    //   text:  one entry per paragraph
-    //   image: optional, e.g. a project thumbnail or "base/images/foto.jpg"
-    //   link:  optional, opens a project ("projects/<folder>/index.html")
-    //   linkLabel: optional text of that link (default "Bekijk het project →")
-    //   A news item with its own page: put it in news/<folder>/ and link to it.
-    // NB: dates marked "controleer" are guesses — check them.
-    {
-      date: "01/10/2026", // controleer
-      title: "Geen huis = geen sleutel",
-      image: "news/omi-keychain/thumbnail.jpg",
-      link: "news/omi-keychain/index.html",
-      linkLabel: "Lees verder →",
-      text: [
-        "Voor OMI ontwierpen we een sleutelhanger. In een stad met 100.000 woningzoekenden maakten we er een voor een sleutel die de meeste mensen niet hebben.",
-        "Het inlegstuk is met de laser gegraveerd in helder plexiglas: een oude huissleutel, het aantal woningzoekenden in Rotterdam en langs de rand ‘geen huis = geen sleutel’.",
-      ],
-    },
-    {
-      date: "18/06/2026",
-      title: "Werksessie Coöperatieve Kansenkaart in Rotterdam",
-      image: "projects/cooperatieve-kansenkaart/thumbnail.jpg",
-      link: "projects/cooperatieve-kansenkaart/index.html",
-      text: [
-        "Met buurtbewoners, ontwerpers, stedenbouwkundigen van de gemeente en corporatiemedewerkers onderzochten we in vier Rotterdamse wijken waar wooncoöperaties kunnen bijdragen aan een betere buurt: Bospolder-Tussendijken, Lombardijen, Groot IJsselmonde en het Oude Noorden.",
-        "De conclusie is helder: er liggen veel kansen voor buurtverbeteringen én voor meer woningen. De uitkomsten zijn uitgewerkt in de Coöperatieve Kansenkaart.",
-      ],
-    },
-    {
-      date: "01/04/2026", // controleer
-      title: "Kaart van het Woonbeleid",
-      image: "projects/kaart-van-het-woonbeleid/thumbnail.jpg",
-      link: "projects/kaart-van-het-woonbeleid/index.html",
-      text: [
-        "Alle wetten en regels rond de woonopgave op één kaart: van artikel 22 van de Grondwet in het midden tot de planetaire grenzen aan de rand.",
-        "Zoom in op elke regel, of volg de rondleiding met stem, in het Nederlands of het Engels.",
-      ],
-    },
-    {
-      date: "18/10/2025",
-      title: "De toekomst is al gebouwd! op de Dutch Design Week",
-      image: "projects/ddw-eindhoven/thumbnail.jpg",
-      link: "projects/ddw-eindhoven/index.html",
-      text: [
-        "Op de Dutch Design Week in Eindhoven laten we met Platform Woonopgave zien dat er nog ruimte is voor 4 miljoen extra woningen, zonder te slopen: door transformatie, woningdelen, optoppen, renovatie en verdichten.",
-        "Loop online mee door het straatprofiel.",
-      ],
-    },
-    {
-      date: "01/10/2025", // controleer
-      title: "Publicatie: Beter benutten bestaande rijtjeswoningen",
-      image: "projects/beter-benutten-bestaande-rijtjeswoningen/thumbnail.jpg",
-      link: "projects/beter-benutten-bestaande-rijtjeswoningen/index.html",
-      text: [
-        "Voor het College van Rijksbouwmeester en Rijksadviseurs onderzochten we de kansen voor woningdelen, woningsplitsen en kleinschalig inbreiden in buurten met rijtjeswoningen uit de jaren ’60, ’70 en ’80.",
-        "Blader door een selectie van het boek of download het volledig.",
-      ],
-    },
-    {
-      date: "01/07/2025", // controleer
-      title: "Goed Wonen in de Binnenstad",
-      image: "projects/goed-wonen-in-de-binnenstad/thumbnail.jpg",
-      link: "projects/goed-wonen-in-de-binnenstad/index.html",
-      text: [
-        "Ons ontwerpvoorstel voor de veerkrachtige binnenstad, voor de City Deal Dynamische Binnensteden: vier doelgroepen, een actieagenda in tien punten en tien projecten.",
-      ],
-    },
-  ],
+  // NEWS is not listed here any more: one markdown file per item in src/content/news/ (see README.md).
 
   // ---------------------------------------------------------------- ABOUT
   about: {

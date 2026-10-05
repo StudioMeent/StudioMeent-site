@@ -12,7 +12,9 @@ website/
 │   ├── layouts/Base.astro    Logo, tabs and <head> shared by every page
 │   ├── styles/style.css      Look of the site
 │   ├── lib/                  Reads and checks the project folders
-│   └── content.js            Site texts: news, about, contact, filter words
+│   ├── content/news/         News: one markdown file per item
+│   ├── content.config.js     BASE — which fields a news file has
+│   └── content.js            Site texts: about, contact, team, filter words
 ├── public/                   Copied to the site as-is
 │   ├── base/                 BASE — back-button.js, reset.css, images/
 │   ├── projects/             One folder per project — this is what grows
@@ -47,8 +49,30 @@ Install Node.js (free, nodejs.org), then in the website folder run `npm install`
 
 On Netlify or Cloudflare Pages: build command `npm run build`, output folder `dist`.
 
+## Adding news
+
+Add a file to `src/content/news/`, e.g. `nieuwe-tentoonstelling.md`. The file name becomes the page address
+(`/news/nieuwe-tentoonstelling/`), so use lowercase and hyphens. The News page sorts by date, newest first.
+
+```markdown
+---
+title: "Nieuwe tentoonstelling"
+date: 2026-11-20
+image: "projects/my-project/thumbnail.jpg"     # optional
+link: "projects/my-project/index.html"         # optional
+linkLabel: "Bekijk het project →"              # optional
+---
+
+First paragraph. Leave an empty line between paragraphs.
+
+Second paragraph, with *italic*, **bold** or a [link](https://example.com).
+```
+
+A news item that needs its own designed page goes in `public/news/<folder>/` and is linked with `link`.
+
 ## Editing texts
 
-- News, About, Contact, filter words: `src/content.js`
+- News: `src/content/news/`
+- About, Contact, team, filter words: `src/content.js`
 - A project's title, year, categories, place: that project's `info.json`
 - A project's page: that project's own folder

@@ -2,9 +2,10 @@
 import Base from "../layouts/Base.astro";
 import { SITE } from "../content.js";
 import { getProjects } from "../lib/projects.js";
-import { url, news } from "../lib/site.js";
+import { url, getNews } from "../lib/site.js";
 
 const projects = getProjects();
+const news = await getNews();
 const used = SITE.categories.filter(c => projects.some(p => p.categories.includes(c)));
 
 // Old links used #news, #news-2, #about, #contact on this page; send them to the new pages.
@@ -12,7 +13,7 @@ const redirects = {
   news: url("news/"),
   about: url("about/"),
   contact: url("contact/"),
-  ...Object.fromEntries(news.map((n, i) => [`news-${i}`, url(`news/${n.slug}/`)])),
+  ...Object.fromEntries(news.map((n, i) => [`news-${i}`, url(`news/${n.id}/`)])),
 };
 ---
 <Base tab="works">
