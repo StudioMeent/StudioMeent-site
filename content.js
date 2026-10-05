@@ -26,17 +26,6 @@ const SITE = {
     //   A news item with its own page: put it in news/<folder>/ and link to it.
     // NB: dates marked "controleer" are guesses — check them.
     {
-      date: "01/10/2026", // controleer
-      title: "Geen huis = geen sleutel",
-      image: "news/omi-keychain/thumbnail.jpg",
-      link: "news/omi-keychain/",
-      linkLabel: "Lees verder →",
-      text: [
-        "Voor OMI ontwierpen we een sleutelhanger. In een stad met 100.000 woningzoekenden maakten we er een voor een sleutel die de meeste mensen niet hebben.",
-        "Het inlegstuk is met de laser gegraveerd in helder plexiglas: een oude huissleutel, het aantal woningzoekenden in Rotterdam en langs de rand ‘geen huis = geen sleutel’.",
-      ],
-    },
-    {
       date: "18/06/2026",
       title: "Werksessie Coöperatieve Kansenkaart in Rotterdam",
       image: "projects/cooperatieve-kansenkaart/thumbnail.jpg",

@@ -3,6 +3,12 @@
 Newest first. Every change to the site gets an entry.
 (History before the Astro rebuild is in the CHANGELOG.md of the old `website/` folder.)
 
+## 2026-10-05 — Removed news item: Geen huis = geen sleutel (OMI keychain)
+
+- Deleted folder: `news/omi-keychain/` (index.html, sleutelhanger.jpg, thumbnail.jpg). Still in the Git history.
+- `content.js`: removed its news item.
+- Base: not changed
+
 ## 2026-10-05 — BASE CHANGE (requested by Kaan): project folders split into info/ and pagina/
 
 - New structure for every project: `info/` (`INFO.txt` form, `thumbnail.jpg`, `downloads/`) and `pagina/` (the page). Made so people without VS Code can supply a project. Page addresses stay the same (`/projects/<folder>/`).
