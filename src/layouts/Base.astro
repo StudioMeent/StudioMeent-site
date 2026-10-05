@@ -1,0 +1,44 @@
+---
+import "../styles/style.css";
+import { url } from "../lib/site.js";
+
+const { tab, title } = Astro.props;
+const tabs = [
+  ["works", "Werk", ""],
+  ["news", "Nieuws", "news/"],
+  ["about", "Over ons", "about/"],
+  ["contact", "Contact", "contact/"],
+];
+const home = url("") || "/";
+---
+<!doctype html>
+<html lang="nl">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>{title ? `${title} — Studio Meent` : "Studio Meent"}</title>
+  <meta name="description" content="Studio Meent is een ontwerpstudio voor architectuur, stedenbouw, strategie en onderzoek.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Work+Sans:wght@300;400;500;600;700;900&display=swap">
+  <slot name="head" />
+</head>
+<body>
+  <div class="page">
+    <header class="masthead">
+      <a class="logo" href={home} aria-label="Studio Meent, home">
+        <span class="logo-studio">Studio</span>
+        <span class="logo-meent">MEENT</span>
+      </a>
+      <nav class="tabs" aria-label="Hoofdmenu">
+        {tabs.map(([key, label, path]) => (
+          <a class:list={["tab", { "is-active": key === tab }]} href={url(path) || home} aria-current={key === tab ? "page" : undefined}>{label}</a>
+        ))}
+      </nav>
+    </header>
+    <main>
+      <slot />
+    </main>
+  </div>
+</body>
+</html>

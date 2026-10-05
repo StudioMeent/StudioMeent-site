@@ -1,0 +1,19 @@
+---
+import Base from "../../layouts/Base.astro";
+import { url, news } from "../../lib/site.js";
+
+export function getStaticPaths() {
+  return news.map(n => ({ params: { slug: n.slug }, props: { n } }));
+}
+const { n } = Astro.props;
+---
+<Base tab="news" title={n.title.replace(/<[^>]*>/g, "")}>
+  <article class="text article">
+    <time>{n.date}</time>
+    <h1 set:html={n.title} />
+    {n.text.map(t => <p set:html={t} />)}
+    {n.image && <img class="article-img" src={url(n.image)} alt="">}
+    {n.link && <p><a class="more" href={url(n.link)}>{n.linkLabel || "Bekijk het project →"}</a></p>}
+    <a class="back" href={url("news/")}>← Alle nieuws</a>
+  </article>
+</Base>

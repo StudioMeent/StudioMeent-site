@@ -1,0 +1,19 @@
+---
+import Base from "../../layouts/Base.astro";
+import { url, news } from "../../lib/site.js";
+---
+<Base tab="news" title="Nieuws">
+  <div class="blog">
+    {news.map(n => (
+      <article class="post">
+        <time>{n.date}</time>
+        <div>
+          <h2><a href={url(`news/${n.slug}/`)} set:html={n.title} /></h2>
+          {n.text.map(t => <p set:html={t} />)}
+          {n.link && <a class="more" href={url(n.link)}>{n.linkLabel || "Bekijk het project →"}</a>}
+        </div>
+        {n.image && <figure><img src={url(n.image)} alt="" loading="lazy"></figure>}
+      </article>
+    ))}
+  </div>
+</Base>

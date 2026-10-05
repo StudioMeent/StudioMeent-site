@@ -13,7 +13,7 @@
      data-info-phone="top-left"    other corner on phones (≤ 640 px), if the normal one is in the way
 
    The info box shows the project's year, client, place, categories and downloads.
-   It reads them from projects/projects.js (made by build.js from the project's info.json):
+   It reads them from projects/projects.js (made by the Astro build from the project's info.json):
      "client", "place", "year", "categories", "color" (text + frame colour of the box),
      "downloads": [{ "label": "Volledig boek (PDF)", "file": "boek.pdf" }]
    On wide screens the box starts open; on phones it starts as a small "Info" button.

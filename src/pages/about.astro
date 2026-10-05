@@ -1,0 +1,58 @@
+---
+import Base from "../layouts/Base.astro";
+import { SITE } from "../content.js";
+import { url } from "../lib/site.js";
+
+const a = SITE.about;
+const TEAM = SITE.team || {};
+const attr = s => String(s).replace(/"/g, "&quot;");
+// Names listed in SITE.team get a photo that floats next to the cursor (touch: tap the name).
+const teamNames = html => Object.keys(TEAM).reduce((h, name) =>
+  h.split(name).join(`<span class="person" data-photo="${attr(url(TEAM[name]))}" tabindex="0">${name}</span>`), html);
+---
+<Base tab="about" title="Over ons">
+  <div class="text">
+    <h1 set:html={a.heading} />
+    {a.text.map(t => <p set:html={t} />)}
+    <dl class="rows">
+      {a.facts.map(([k, v]) => <div><dt>{k}</dt><dd set:html={k === "Team" ? teamNames(v) : v} /></div>)}
+    </dl>
+  </div>
+  <img class="person-photo" alt="" hidden>
+</Base>
+
+<script>
+  const view = document.querySelector("main")!;
+  const float = document.querySelector<HTMLImageElement>(".person-photo")!;
+  const broken = new Set<string>();
+  const person = (t: EventTarget | null) => (t as Element | null)?.closest?.<HTMLElement>(".person") ?? null;
+
+  function showPhoto(el: HTMLElement, x: number, y: number) {
+    const src = el.dataset.photo!;
+    if (broken.has(src)) return;
+    if (float.getAttribute("src") !== src) {
+      float.onerror = () => { broken.add(src); float.hidden = true; };
+      float.src = src;
+    }
+    float.hidden = false; movePhoto(x, y);
+  }
+  function movePhoto(x: number, y: number) {
+    const w = float.offsetWidth || 240, h = float.offsetHeight || 300;
+    const left = x + 24 + w > innerWidth ? x - 24 - w : x + 24;
+    float.style.left = Math.max(8, left) + "px";
+    float.style.top = Math.min(innerHeight - h - 8, Math.max(8, y - h / 2)) + "px";
+  }
+  const hidePhoto = () => { float.hidden = true; };
+
+  view.addEventListener("pointerover", e => { const p = person(e.target); if (p && e.pointerType === "mouse") showPhoto(p, e.clientX, e.clientY); });
+  view.addEventListener("pointermove", e => { if (!float.hidden && e.pointerType === "mouse" && person(e.target)) movePhoto(e.clientX, e.clientY); });
+  view.addEventListener("pointerout", e => { if (e.pointerType === "mouse" && person(e.target) && !person(e.relatedTarget)) hidePhoto(); });
+  view.addEventListener("click", e => {
+    const p = person(e.target);
+    if (!p) return hidePhoto();
+    if (float.hidden) { const r = p.getBoundingClientRect(); showPhoto(p, r.left, r.top + r.height / 2); } else hidePhoto();
+  });
+  view.addEventListener("focusin", e => { const p = person(e.target); if (p) { const r = p.getBoundingClientRect(); showPhoto(p, r.right, r.top + r.height / 2); } });
+  view.addEventListener("focusout", hidePhoto);
+  addEventListener("scroll", hidePhoto, { passive: true });
+</script>

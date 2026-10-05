@@ -1,7 +1,7 @@
 /* =====================================================================
    STUDIO MEENT — SITE TEXTS
    News, About, Contact and the filter words. Edit, save, refresh.
-   Projects live in their own folders in /projects (see README.md).
+   Projects live in their own folders in /public/projects (see README.md).
 
    Tips
    - Keep the quotes "..." and the commas at the end of each line.
@@ -10,14 +10,14 @@
    - Images for news etc. go in /base/images; refer to them as "base/images/name.jpg".
    ===================================================================== */
 
-const SITE = {
+export const SITE = {
 
   // Filter words at the top of the Works page.
   categories: ["Architectuur", "Stedenbouw", "Onderzoek", "Gebouwd", "Tentoonstelling", "Publicatie", "Installatie"],
 
   // PROJECTS are not listed here any more.
-  // Each project is its own folder in /projects with an info.json.
-  // build.js turns those into the Works grid automatically.
+  // Each project is its own folder in /public/projects with an info.json.
+  // The build (npm run build) turns those into the Works grid automatically.
 
   // ----------------------------------------------------------------- NEWS
   // Newest first. text = one entry per paragraph.
