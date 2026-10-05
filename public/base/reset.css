@@ -1,0 +1,45 @@
+/* Studio Meent — Shared reset and utilities
+   Link in any project's <head>: <link rel="stylesheet" href="../../base/reset.css"> */
+
+/* Safe area insets for notched devices */
+:root {
+  box-sizing: border-box;
+  padding-top: env(safe-area-inset-top, 0px);
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+}
+
+html {
+  scroll-padding-top: env(safe-area-inset-top, 0px);
+}
+
+*, *::before, *::after {
+  box-sizing: inherit;
+}
+
+/* Base element reset */
+body {
+  margin: 0;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Accessibility */
+:focus-visible {
+  outline: 3px solid currentColor;
+  outline-offset: 2px;
+}
+
+/* Media queries */
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+@media print {
+  /* Hide elements by default in print */
+  [data-no-print] {
+    display: none !important;
+  }
+}

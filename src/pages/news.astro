@@ -1,0 +1,21 @@
+---
+/* News — a blog: every item in full, newest first (BASE: don't change unless asked). */
+import Base from "../layouts/Base.astro";
+import SITE from "../../content.js";
+import { href } from "../lib/url.js";
+---
+<Base tab="news" title="Nieuws">
+  <div class="blog">
+    {SITE.news.map((n, i) => (
+      <article class="post" id={`news-${i}`}>
+        <time>{n.date}</time>
+        <div>
+          <h2><a href={n.link ? href(n.link) : `#news-${i}`}>{n.title}</a></h2>
+          {n.text.map(t => <p set:html={t} />)}
+          {n.link && <a class="more" href={href(n.link)}>{n.linkLabel || "Bekijk het project →"}</a>}
+        </div>
+        {n.image && <figure><img src={href(n.image)} alt="" loading="lazy" decoding="async"></figure>}
+      </article>
+    ))}
+  </div>
+</Base>

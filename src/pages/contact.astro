@@ -1,0 +1,25 @@
+---
+/* Contact (BASE: don't change unless asked). */
+import Base from "../layouts/Base.astro";
+import SITE from "../../content.js";
+
+const c = SITE.contact;
+---
+<Base tab="contact" title="Contact">
+  <div class="text">
+    <dl class="rows">
+      <div><dt>Email</dt><dd><a id="mail" href={`mailto:${c.email}`}>{c.email}</a><button class="copy" id="copy" type="button">Kopieer</button></dd></div>
+      {c.rows.map(([k, v]) => <div><dt>{k}</dt><dd set:html={v} /></div>)}
+    </dl>
+  </div>
+</Base>
+
+<script>
+  const btn = document.getElementById("copy")!;
+  const mail = document.getElementById("mail")!;
+  btn.addEventListener("click", () => {
+    const done = () => { btn.textContent = "Gekopieerd"; setTimeout(() => (btn.textContent = "Kopieer"), 1500); };
+    const select = () => { const r = document.createRange(); r.selectNodeContents(mail); const s = getSelection()!; s.removeAllRanges(); s.addRange(r); };
+    navigator.clipboard?.writeText(mail.textContent!).then(done, select) ?? select();
+  });
+</script>

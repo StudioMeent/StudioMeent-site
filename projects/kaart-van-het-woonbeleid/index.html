@@ -1,0 +1,558 @@
+<!doctype html>
+<html lang="nl">
+<head>
+<meta charset="utf-8">
+<meta name="color-scheme" content="light">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Kaart van het Woonbeleid</title>
+<!-- Back to Studio Meent (base/back-button.js) -->
+<script src="../../base/back-button.js" data-position="top-left" data-info="bottom-right" data-info-phone="top-left" defer></script>
+<link rel="stylesheet" href="../../base/reset.css">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Work+Sans:wght@400;500;700;800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --map:#F1F1F1; --outside:#FFFFFF; --ink:#231F20; --paper:#FFFFFF; --green:#31963D; --soft:#6C6869;
+}
+html{ height:100%; background:#FFFFFF; color-scheme:light; }
+body{ height:100%; background:var(--outside); color:var(--ink); overflow:hidden;
+  font-family:"Work Sans", "Helvetica Neue", Arial, sans-serif; }
+canvas{ position:fixed; inset:0; width:100%; height:100%; display:block; touch-action:none; cursor:grab; }
+canvas.dragging{ cursor:grabbing; }
+button{ font:inherit; color:inherit; }
+:focus-visible{ outline:3px solid var(--green); outline-offset:2px; }
+
+/* top bar */
+.top{ position:fixed; top:0; left:0; right:0; padding:calc(env(safe-area-inset-top,0px) + 14px) 14px 0;
+  display:flex; justify-content:space-between; align-items:flex-start; pointer-events:none; }
+.top > *{ pointer-events:auto; }
+.back{ display:inline-flex; align-items:center; gap:.5em; padding:.55em .9em; background:var(--paper);
+  border:2px solid var(--ink); color:var(--ink); text-decoration:none; font-weight:500; font-size:15px; }
+.back:hover{ background:var(--ink); color:var(--paper); }
+.lang{ margin-left:auto; display:flex; border:2px solid var(--ink); background:var(--paper); }
+.lang button{ border:0; background:none; padding:.55em .8em; font-weight:700; font-size:15px; cursor:pointer; }
+.lang button[aria-pressed="true"]{ background:var(--ink); color:var(--paper); }
+
+/* zoom */
+.zoom{ position:fixed; right:14px; top:calc(env(safe-area-inset-top,0px) + 74px); display:flex; flex-direction:column; gap:6px; }
+.zoom button{ width:44px; height:44px; border:2px solid var(--ink); background:var(--paper); cursor:pointer;
+  font-size:22px; font-weight:500; line-height:1; display:grid; place-items:center; }
+.zoom button:hover{ background:var(--ink); color:var(--paper); }
+.zoom svg{ width:20px; height:20px; }
+
+/* tour card, styled like the cards on the map */
+.card{ position:fixed; left:14px; bottom:calc(env(safe-area-inset-bottom,0px) + 14px); width:min(440px, calc(100% - 28px));
+  background:var(--paper); border:2px solid var(--ink); padding:22px 18px 16px; }
+.tag{ position:absolute; top:-2px; right:-2px; background:var(--ink); color:var(--paper); font-weight:700;
+  font-size:12px; letter-spacing:.04em; padding:3px 8px 4px; text-transform:uppercase; }
+.chapter{ display:flex; align-items:center; gap:12px; margin:0 0 10px; }
+.chip{ margin:0; display:inline-block; background:var(--ink); color:var(--paper); font-weight:800; text-transform:uppercase;
+  font-size:clamp(20px, 3.2vw, 28px); line-height:1; padding:.32em .45em .3em; letter-spacing:-.005em; }
+.count{ font-weight:500; font-size:14px; color:var(--soft); font-variant-numeric:tabular-nums; }
+.desc{ margin:0 0 14px; font-size:16px; line-height:1.45; max-width:62ch; min-height:2.9em; }
+.controls{ display:flex; align-items:center; gap:8px; flex-wrap:wrap; }
+.btn{ border:2px solid var(--ink); background:var(--paper); padding:.55em .9em; font-weight:700; font-size:15px; cursor:pointer;
+  display:inline-flex; align-items:center; gap:.5em; min-height:44px; }
+.btn.primary{ background:var(--ink); color:var(--paper); }
+.btn.primary:hover{ background:var(--green); border-color:var(--green); }
+.btn:not(.primary):hover{ background:var(--map); color:#231F20; }
+.btn.icon{ width:44px; justify-content:center; padding:0; font-size:20px; }
+.btn svg{ width:14px; height:14px; flex:none; }
+.spacer{ flex:1; }
+.voice[aria-pressed="false"]{ color:var(--soft); text-decoration:line-through; text-decoration-thickness:2px; }
+
+.timeline{ margin-top:14px; }
+.bar{ position:relative; height:22px; cursor:pointer; touch-action:none; }
+.bar::before{ content:""; position:absolute; left:0; right:0; top:10px; height:2px; background:var(--ink); opacity:.25; }
+.fill{ position:absolute; left:0; top:9px; height:4px; background:var(--green); width:0; }
+.tick{ position:absolute; top:5px; width:2px; height:12px; background:var(--ink); transform:translateX(-1px); }
+.tick.on{ background:var(--green); height:16px; top:3px; width:4px; transform:translateX(-2px); }
+.time{ display:flex; justify-content:space-between; font-size:13px; color:var(--soft); font-variant-numeric:tabular-nums; margin-top:2px; }
+
+.follow{ margin-top:12px; width:100%; justify-content:center; border-style:dashed; }
+.follow[hidden]{ display:none; }
+
+.hint{ position:fixed; left:50%; top:calc(env(safe-area-inset-top,0px) + 18px); transform:translateX(-50%);
+  background:var(--ink); color:var(--paper); padding:.5em .9em; font-size:14px; font-weight:500; white-space:nowrap;
+  transition:opacity .6s; pointer-events:none; }
+.hint.gone{ opacity:0; }
+
+/* edit panel (#bewerk) */
+.edit{ position:fixed; right:70px; top:calc(env(safe-area-inset-top,0px) + 74px); width:340px; max-height:calc(100% - 200px); overflow:auto;
+  background:var(--paper); border:2px solid var(--ink); padding:14px; font-size:13px; }
+.edit h3{ margin:0 0 6px; font-size:15px; }
+.edit p{ margin:0 0 10px; color:var(--soft); line-height:1.4; }
+.edit .row{ display:grid; grid-template-columns:1fr 64px auto auto; gap:4px; align-items:center; padding:4px 0; border-top:1px solid color-mix(in srgb, var(--ink) 20%, transparent); }
+.edit .row.on{ background:var(--map); color:#231F20; }
+.edit input{ width:64px; font:inherit; padding:3px; border:1px solid var(--ink); background:var(--paper); color:var(--ink); }
+.edit button{ font-size:12px; padding:3px 6px; border:1px solid var(--ink); background:var(--paper); cursor:pointer; }
+.edit .acts{ display:flex; gap:6px; margin-top:10px; flex-wrap:wrap; }
+
+@media (max-width:640px){
+  .card{ padding:18px 12px 12px; width:calc(100% - 28px); }
+  .desc{ font-size:15px; margin-bottom:10px; min-height:0; }
+  .controls{ gap:6px; flex-wrap:nowrap; }
+  .btn{ font-size:14px; padding:.5em .7em; }
+  .btn.icon{ width:40px; }
+  .hint{ left:14px; transform:none; top:calc(env(safe-area-inset-top,0px) + 70px); font-size:13px; white-space:normal; max-width:calc(100% - 90px); }
+  .back{ font-size:14px; }
+  .edit{ right:14px; left:14px; width:auto; }
+}
+@media (prefers-reduced-motion:reduce){ .hint{ transition:none; } }
+</style>
+</head>
+<body>
+<canvas id="map" aria-label="Kaart van het Woonbeleid, versleepbaar en zoombaar"></canvas>
+
+<div class="top">
+  <!-- the site's back button (base/back-button.js, top-left) sits here -->
+  <div class="lang" role="group" aria-label="Taal / language">
+    <button type="button" data-lang="nl" aria-pressed="true">NL</button>
+    <button type="button" data-lang="en" aria-pressed="false">EN</button>
+  </div>
+</div>
+
+<div class="zoom">
+  <button type="button" id="zin" aria-label="Inzoomen">+</button>
+  <button type="button" id="zout" aria-label="Uitzoomen">−</button>
+  <button type="button" id="zfit" aria-label="Hele kaart"><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 7V2h5M13 2h5v5M18 13v5h-5M7 18H2v-5"/></svg></button>
+</div>
+
+<div class="hint" id="hint" data-t="hint">Sleep om te verschuiven, scroll of knijp om te zoomen</div>
+
+<section class="card" id="card" aria-live="polite">
+  <span class="tag" data-t="tag">Rondleiding</span>
+  <div class="chapter"><h2 class="chip" id="chip">Kaart van het Woonbeleid</h2><span class="count" id="count"></span></div>
+  <p class="desc" id="desc"></p>
+  <div class="controls">
+    <button type="button" class="btn primary" id="play"><svg viewBox="0 0 14 14" id="playIcon"><path d="M2 1l11 6-11 6z" fill="currentColor"/></svg><span id="playLabel">Start rondleiding</span></button>
+    <button type="button" class="btn voice" id="voice" aria-pressed="true" data-t="voice">Met stem</button>
+    <span class="spacer"></span>
+    <button type="button" class="btn icon" id="prev" aria-label="Vorige">‹</button>
+    <button type="button" class="btn icon" id="next" aria-label="Volgende">›</button>
+  </div>
+  <div class="timeline">
+    <div class="bar" id="bar" role="slider" aria-label="Voortgang" tabindex="0" aria-valuemin="0"><div class="fill" id="fill"></div></div>
+    <div class="time"><span id="tcur">0:00</span><span id="tdur">0:00</span></div>
+  </div>
+  <button type="button" class="btn follow" id="follow" hidden data-t="follow">Volg de rondleiding</button>
+</section>
+
+<script src="tiles.js"></script>
+<script>
+/* ============================================================
+   KAART VAN HET WOONBELEID — project page
+   ------------------------------------------------------------
+   Tour stops: edit `rect` (map coordinates in PDF points,
+   [x0, y0, x1, y1]; the map is 8561 x 8844 pt) and the start
+   times per language (seconds). Open the page with #bewerk at
+   the end of the URL to set these while listening and copy
+   the result.
+   ============================================================ */
+const STOPS = [
+  { id:"intro",  rect:[5850,350,8300,1350],
+    nl:{ t:0,     name:"Kaart van het Woonbeleid", desc:"Een overzicht van alle wetten en regels die raken aan de brede woonopgave in Nederland." },
+    en:{ t:0,     name:"Map of Housing Policy",    desc:"An overview of all the laws and rules that touch on the housing challenge in the Netherlands." } },
+  { id:"grondwet", rect:[3880,4080,4850,4780],
+    nl:{ t:22.5,  name:"Grondwet", desc:"In het midden: artikel 22. Het bevorderen van voldoende woongelegenheid is voorwerp van zorg der overheid." },
+    en:{ t:24.3,  name:"Constitution", desc:"At the centre: Article 22. Providing sufficient housing is a duty of care for the government." } },
+  { id:"locaties", rect:[4550,3650,7600,5450],
+    nl:{ t:35.1,  name:"Locaties", desc:"Waar er gebouwd mag worden: omgevingswet, plannen, vergunningen, participatie en inspraak." },
+    en:{ t:40.6,  name:"Locations", desc:"Where building is allowed: the Environment Act, plans, permits, participation and objection." } },
+  { id:"grondgrex", rect:[4700,5450,8200,8150],
+    nl:{ t:47.9,  name:"Grond + grex", desc:"Grondbeleid, grondexploitatie en kostenverhaal: wie de grond verwerft en wie de kosten draagt." },
+    en:{ t:53.8,  name:"Land + land development", desc:"Land policy, land development and cost recovery: who acquires the land and who pays." } },
+  { id:"financiering", rect:[850,4950,5000,8400],
+    nl:{ t:57.6,  name:"Financiering", desc:"Hoe woningen betaald worden: sociale huur, private huur en koop, coöperaties en Europese fondsen." },
+    en:{ t:61.8,  name:"Financing", desc:"How homes are paid for: social rent, private rent and ownership, cooperatives and European funds." } },
+  { id:"woning", rect:[1000,600,4000,4950],
+    nl:{ t:85.5,  name:"De woning", desc:"De eisen aan de woning zelf: bouwen, vergunning, ontwerp, begrippen en bewonen." },
+    en:{ t:97.8,  name:"The dwelling", desc:"Requirements for the home itself: building, permits, design, definitions and living." } },
+  { id:"bestaand", rect:[3600,400,6300,3420],
+    nl:{ t:106.1, name:"Bestaande voorraad", desc:"Wat er al staat: onderhoud, renovatie, transformatie, samenwonen, doorstromen en leegstand." },
+    en:{ t:125.4, name:"Existing stock", desc:"What is already there: maintenance, renovation, transformation, sharing, moving on and vacancy." } },
+  { id:"sturing", rect:[5700,1600,8200,3200],
+    nl:{ t:123.5, name:"Sturing", desc:"De regie op de opgave: aantallen, locaties, doelgroepen en de instrumenten van rijk, provincie en gemeente." },
+    en:{ t:146.2, name:"Steering", desc:"Directing the task: numbers, locations, target groups and the instruments of state, province and municipality." } },
+  { id:"planetair", rect:[60,1900,1500,5400],
+    nl:{ t:140.3, name:"Planetaire grenzen", desc:"Aan de buitenrand: klimaateisen, grondstoffen en de duurzame inrichting van locaties." },
+    en:{ t:167.3, name:"Planetary boundaries", desc:"Along the outer edge: climate requirements, raw materials and sustainable use of locations." } },
+  { id:"outro", rect:null,
+    nl:{ t:150.2, name:"Verken zelf", desc:"Zoom in op elke wet of regel. Elk kaartje laat zien waar de regel vandaan komt en op welk niveau hij geldt." },
+    en:{ t:179.3, name:"Explore", desc:"Zoom in on any law or rule. Each card shows where the rule comes from and at which level it applies." } },
+];
+const DUR = { nl:155.71, en:184.81 };
+
+const UI = {
+  nl:{ back:"Terug naar overzicht", tag:"Rondleiding", start:"Start rondleiding", pause:"Pauzeer", resume:"Hervat", replay:"Opnieuw",
+       voice:"Met stem", follow:"Volg de rondleiding", hint:"Sleep om te verschuiven, scroll of knijp om te zoomen",
+       zin:"Inzoomen", zout:"Uitzoomen", zfit:"Hele kaart", prev:"Vorige", next:"Volgende", progress:"Voortgang",
+       intro:"Alle wetten en regels rond de woonopgave, van de Grondwet in het midden tot de planetaire grenzen aan de rand. Start de rondleiding of verken de kaart zelf." },
+  en:{ back:"Back to overview", tag:"Guided tour", start:"Start the tour", pause:"Pause", resume:"Resume", replay:"Play again",
+       voice:"With voice", follow:"Follow the tour", hint:"Drag to move, scroll or pinch to zoom",
+       zin:"Zoom in", zout:"Zoom out", zfit:"Whole map", prev:"Previous", next:"Next", progress:"Progress",
+       intro:"Every law and rule around housing, from the Constitution at the centre to the planetary boundaries at the edge. Start the tour or explore the map yourself." }
+};
+
+/* ---------- embedded data ---------- */
+const MAP_W = 8560.63, MAP_H = 8844.09, TILE = 512, BASE = 1.5; // tile px per pt at level 0
+const GRID = {"0": [26, 26], "1": [13, 13], "2": [7, 7], "3": [4, 4], "4": [2, 2]};
+const MAXL = 4;
+const TILES = window.WB_TILES || {};   // loaded from tiles.js
+const AUDIO = { nl:"audio/rondleiding-nl.m4a", en:"audio/rondleiding-en.m4a" };   // voice-over files
+
+/* ---------- setup ---------- */
+const reduceMotion = matchMedia("(prefers-reduced-motion: reduce)").matches;
+const editMode = location.hash === "#bewerk";
+const $ = id => document.getElementById(id);
+const canvas = $("map"), ctx = canvas.getContext("2d");
+let dpr = 1, vw = 0, vh = 0, safe = {l:0,t:0,r:0,b:0};
+let cam = { x:MAP_W/2, y:MAP_H/2, z:0.1 };
+let dirty = true, lang = "nl";
+let outsideColor = "#FFFFFF";
+
+if (editMode) {
+  try { const o = JSON.parse(localStorage.getItem("kaart-stops") || "null");
+    if (o) o.forEach((s,i)=>{ if(STOPS[i]){ STOPS[i].rect=s.rect; STOPS[i].nl.t=s.nl; STOPS[i].en.t=s.en; } }); } catch(e){}
+}
+
+/* ---------- tiles ---------- */
+const cache = new Map(); let frameNo = 0;
+function tile(L,x,y){
+  const k = L+"_"+x+"_"+y;
+  let e = cache.get(k);
+  if (!e) {
+    const src = TILES[k]; if (!src) return null;
+    const img = new Image(); img.decoding = "async";
+    e = { img, ok:false, used:frameNo };
+    img.onload = () => { e.ok = true; dirty = true; };
+    img.src = "data:image/webp;base64," + src;
+    cache.set(k, e);
+  }
+  e.used = frameNo;
+  return e.ok ? e.img : null;
+}
+function evict(){
+  if (cache.size < 260) return;
+  const arr = [...cache.entries()].filter(([k])=>!k.startsWith(MAXL+"_")).sort((a,b)=>a[1].used-b[1].used);
+  for (let i=0; i<arr.length && cache.size>200; i++){ if (arr[i][1].used===frameNo) break; arr[i][1].img.src=""; cache.delete(arr[i][0]); }
+}
+
+/* ---------- camera ---------- */
+const sc = () => ({ x:(safe.l+safe.r)/2, y:(safe.t+safe.b)/2 });
+function toScreen(wx,wy){ const c=sc(); return [ (wx-cam.x)*cam.z + c.x, (wy-cam.y)*cam.z + c.y ]; }
+function toWorld(sx,sy){ const c=sc(); return [ (sx-c.x)/cam.z + cam.x, (sy-c.y)/cam.z + cam.y ]; }
+function fitZ(){ return Math.min((safe.r-safe.l)/(MAP_W*1.04), (safe.b-safe.t)/(MAP_H*1.04)); }
+const minZ = () => fitZ()*0.7, maxZ = () => 2.4;
+function viewFor(rect){
+  if (!rect) return { x:MAP_W/2, y:MAP_H/2, z:fitZ() };
+  const w = rect[2]-rect[0], h = rect[3]-rect[1];
+  const z = Math.min((safe.r-safe.l)/(w*1.08), (safe.b-safe.t)/(h*1.08));
+  return { x:rect[0]+w/2, y:rect[1]+h/2, z:Math.min(z, maxZ()) };
+}
+function clampCam(){
+  cam.z = Math.max(minZ(), Math.min(maxZ(), cam.z));
+  const c = sc(), mx = (vw*0.5)/cam.z, my = (vh*0.5)/cam.z;
+  cam.x = Math.max(-mx, Math.min(MAP_W+mx, cam.x));
+  cam.y = Math.max(-my, Math.min(MAP_H+my, cam.y));
+}
+function zoomAt(sx, sy, factor){
+  const [wx,wy] = toWorld(sx,sy);
+  cam.z = Math.max(minZ(), Math.min(maxZ(), cam.z*factor));
+  const c = sc(); cam.x = wx - (sx-c.x)/cam.z; cam.y = wy - (sy-c.y)/cam.z;
+  clampCam(); dirty = true;
+}
+
+/* smooth zoom-and-pan flight (van Wijk & Nuij) */
+function interpolateZoom(p0,p1){
+  const rho=Math.SQRT2, rho2=2, rho4=4;
+  const [ux0,uy0,w0]=p0, [ux1,uy1,w1]=p1, dx=ux1-ux0, dy=uy1-uy0, d2=dx*dx+dy*dy;
+  let f, S;
+  if (d2 < 1e-6) { S = Math.log(w1/w0)/rho; f = t => [ux0+t*dx, uy0+t*dy, w0*Math.exp(rho*t*S)]; }
+  else {
+    const d1=Math.sqrt(d2), b0=(w1*w1-w0*w0+rho4*d2)/(2*w0*rho2*d1), b1=(w1*w1-w0*w0-rho4*d2)/(2*w1*rho2*d1);
+    const r0=Math.log(Math.sqrt(b0*b0+1)-b0), r1=Math.log(Math.sqrt(b1*b1+1)-b1);
+    S=(r1-r0)/rho;
+    f = t => { const s=t*S, c0=Math.cosh(r0), u=w0/(rho2*d1)*(c0*Math.tanh(rho*s+r0)-Math.sinh(r0));
+               return [ux0+u*dx, uy0+u*dy, w0*c0/Math.cosh(rho*s+r0)]; };
+  }
+  f.duration = Math.abs(S)*1000;
+  return f;
+}
+let flight = null;
+function flyTo(view, onDone){
+  const W = safe.r - safe.l;
+  if (reduceMotion) { cam = {...view}; dirty = true; onDone && onDone(); return; }
+  const f = interpolateZoom([cam.x,cam.y,W/cam.z],[view.x,view.y,W/view.z]);
+  flight = { f, t0:performance.now(), dur:Math.max(900, Math.min(3200, f.duration*0.9)), onDone };
+}
+const ease = t => t<.5 ? 4*t*t*t : 1-Math.pow(-2*t+2,3)/2;
+
+/* ---------- focus frame ---------- */
+const focus = { rect:null, a:0, target:0 };
+
+/* ---------- drawing ---------- */
+function drawLevel(L){
+  const s = BASE/Math.pow(2,L);           // tile px per pt
+  const ts = TILE/s;                       // world pt per tile
+  const [wx0,wy0] = toWorld(0,0), [wx1,wy1] = toWorld(vw,vh);
+  const [cols,rows] = GRID[L];
+  const i0=Math.max(0,Math.floor(wx0/ts)), i1=Math.min(cols-1,Math.floor(wx1/ts));
+  const j0=Math.max(0,Math.floor(wy0/ts)), j1=Math.min(rows-1,Math.floor(wy1/ts));
+  const c = sc();
+  for (let j=j0;j<=j1;j++) for (let i=i0;i<=i1;i++){
+    const img = tile(L,i,j); if (!img) continue;
+    const X0 = Math.round(((i*ts - cam.x)*cam.z + c.x)*dpr), Y0 = Math.round(((j*ts - cam.y)*cam.z + c.y)*dpr);
+    const X1 = Math.round(((i*ts + img.naturalWidth/s - cam.x)*cam.z + c.x)*dpr), Y1 = Math.round(((j*ts + img.naturalHeight/s - cam.y)*cam.z + c.y)*dpr);
+    ctx.drawImage(img, X0, Y0, X1-X0, Y1-Y0);
+  }
+}
+function roundRect(x,y,w,h,r){ ctx.moveTo(x+r,y); ctx.arcTo(x+w,y,x+w,y+h,r); ctx.arcTo(x+w,y+h,x,y+h,r); ctx.arcTo(x,y+h,x,y,r); ctx.arcTo(x,y,x+w,y,r); ctx.closePath(); }
+function draw(now){
+  frameNo++;
+  ctx.setTransform(1,0,0,1,0,0);
+  ctx.fillStyle = outsideColor; ctx.fillRect(0,0,canvas.width,canvas.height);
+  const [mx0,my0] = toScreen(0,0), [mx1,my1] = toScreen(MAP_W,MAP_H);
+  ctx.fillStyle = "#FFFFFF"; ctx.fillRect(mx0*dpr,my0*dpr,(mx1-mx0)*dpr,(my1-my0)*dpr);
+  ctx.imageSmoothingQuality = "high";
+  const want = Math.max(0, Math.min(MAXL, Math.floor(Math.log2(BASE/(cam.z*dpr)))));
+  drawLevel(MAXL);
+  if (want+1 < MAXL) drawLevel(want+1);
+  if (want < MAXL) drawLevel(want);
+  // focus: dim the rest, dotted frame around the section (same dots as the map)
+  if (focus.rect && focus.a > 0.01){
+    const pad = 14;
+    let [x0,y0] = toScreen(focus.rect[0],focus.rect[1]), [x1,y1] = toScreen(focus.rect[2],focus.rect[3]);
+    x0-=pad; y0-=pad; x1+=pad; y1+=pad;
+    ctx.setTransform(dpr,0,0,dpr,0,0);
+    ctx.fillStyle = `rgba(255,255,255,${0.7*focus.a})`;
+    ctx.beginPath(); ctx.rect(0,0,vw,vh); roundRect(x0,y0,x1-x0,y1-y0,22); ctx.fill("evenodd");
+    ctx.beginPath(); roundRect(x0,y0,x1-x0,y1-y0,22);
+    ctx.strokeStyle = `rgba(35,31,32,${focus.a})`; ctx.lineWidth = 5; ctx.lineCap = "round";
+    ctx.setLineDash([0.01, 14]); ctx.lineDashOffset = reduceMotion ? 0 : -(now/90)%14;
+    ctx.stroke(); ctx.setLineDash([]);
+  }
+  evict();
+}
+
+function loop(now){
+  if (flight){
+    let t = (now - flight.t0)/flight.dur; if (t>=1) t=1;
+    const [x,y,w] = flight.f(ease(t)); cam.x=x; cam.y=y; cam.z=(safe.r-safe.l)/w; dirty = true;
+    if (t===1){ const cb = flight.onDone; flight = null; cb && cb(); }
+  }
+  tourTick();
+  const fa = focus.a + (focus.target - focus.a)*(reduceMotion?1:0.1);
+  if (Math.abs(fa-focus.a) > 0.001) { focus.a = fa; dirty = true; } else focus.a = focus.target;
+  if (focus.a > 0.01 && !reduceMotion) dirty = true; // marching dots
+  if (dirty){ dirty = false; draw(now); }
+  requestAnimationFrame(loop);
+}
+
+/* ---------- layout ---------- */
+function layout(){
+  const old = sc(), oldW = safe.r-safe.l;
+  dpr = Math.min(window.devicePixelRatio||1, 2.5);
+  vw = innerWidth; vh = innerHeight;
+  canvas.width = Math.round(vw*dpr); canvas.height = Math.round(vh*dpr);
+  const card = $("card").getBoundingClientRect();
+  const top = 64 + (parseFloat(getComputedStyle(document.documentElement).paddingTop)||0);
+  if (vw > 900) safe = { l:card.right+20, t:top, r:vw-74, b:vh-20 };
+  else safe = { l:12, t:top, r:vw-66, b:card.top-12 };
+  if (safe.b - safe.t < 160) safe.t = Math.max(8, safe.b-160);
+  outsideColor = getComputedStyle(document.documentElement).getPropertyValue("--outside").trim() || "#FFFFFF";
+  if (oldW > 0) clampCam();
+  dirty = true;
+}
+
+/* ---------- interaction ---------- */
+let pointers = new Map(), last = null, pinch = null, moved = false;
+function userMoved(){
+  hideHint();
+  if (tour.active && tour.attached){ tour.attached = false; focus.target = 0; $("follow").hidden = false; }
+  flight = null;
+}
+canvas.addEventListener("pointerdown", e => {
+  canvas.setPointerCapture(e.pointerId); pointers.set(e.pointerId, {x:e.clientX,y:e.clientY});
+  canvas.classList.add("dragging"); moved = false;
+  if (pointers.size === 2){ const [a,b] = [...pointers.values()]; pinch = { d:Math.hypot(a.x-b.x,a.y-b.y) }; }
+});
+canvas.addEventListener("pointermove", e => {
+  if (!pointers.has(e.pointerId)) return;
+  const p = pointers.get(e.pointerId), dx = e.clientX-p.x, dy = e.clientY-p.y;
+  if (!moved && Math.hypot(dx,dy) < 3 && pointers.size===1) return;
+  if (!moved){ moved = true; userMoved(); }
+  if (pointers.size === 1){ cam.x -= dx/cam.z; cam.y -= dy/cam.z; clampCam(); dirty = true; }
+  p.x = e.clientX; p.y = e.clientY;
+  if (pointers.size === 2 && pinch){
+    const [a,b] = [...pointers.values()], d = Math.hypot(a.x-b.x,a.y-b.y);
+    const mx=(a.x+b.x)/2, my=(a.y+b.y)/2;
+    if (pinch.mx!==undefined){ cam.x -= (mx-pinch.mx)/cam.z; cam.y -= (my-pinch.my)/cam.z; }
+    zoomAt(mx, my, d/pinch.d); pinch = { d, mx, my };
+  }
+});
+function up(e){ pointers.delete(e.pointerId); if (pointers.size<2) pinch=null; if (!pointers.size) canvas.classList.remove("dragging"); }
+canvas.addEventListener("pointerup", up); canvas.addEventListener("pointercancel", up);
+canvas.addEventListener("dblclick", e => { userMoved(); zoomAt(e.clientX, e.clientY, 2); });
+canvas.addEventListener("wheel", e => {
+  e.preventDefault(); userMoved();
+  const lines = e.deltaMode === 1 ? 16 : 1;
+  const mouseWheel = e.deltaMode !== 0 || (e.deltaX === 0 && Math.abs(e.deltaY) >= 50 && Number.isInteger(e.deltaY));
+  if (e.ctrlKey || mouseWheel) zoomAt(e.clientX, e.clientY, Math.exp(-e.deltaY*lines*(e.ctrlKey?0.01:0.0022)));
+  else { cam.x += e.deltaX/cam.z; cam.y += e.deltaY/cam.z; clampCam(); dirty = true; }
+}, { passive:false });
+
+function zoomBtn(f){ userMoved(); const c=sc(); const from={...cam}; cam.z=Math.max(minZ(),Math.min(maxZ(),cam.z*f)); const to={...cam}; cam=from; flyTo(to); }
+$("zin").onclick = () => zoomBtn(1.6);
+$("zout").onclick = () => zoomBtn(1/1.6);
+$("zfit").onclick = () => { userMoved(); flyTo(viewFor(null)); };
+
+/* ---------- hint ---------- */
+let hintTimer = setTimeout(hideHint, 7000);
+function hideHint(){ $("hint").classList.add("gone"); clearTimeout(hintTimer); }
+
+/* ---------- tour ---------- */
+const audios = { nl:new Audio(AUDIO.nl), en:new Audio(AUDIO.en) };
+Object.values(audios).forEach(a => { a.preload = "auto"; a.addEventListener("ended", onEnded); });
+const tour = { active:false, attached:true, idx:-1 };
+const A = () => audios[lang];
+
+function stopAt(t){ let k = 0; STOPS.forEach((s,i)=>{ if (t >= s[lang].t - 0.05) k = i; }); return k; }
+function goStop(i, animate=true){
+  tour.idx = i; renderCaption();
+  if (!tour.attached) return;
+  const s = STOPS[i]; focus.target = 0;
+  const v = viewFor(s.rect);
+  const done = () => { focus.rect = s.rect; focus.target = s.rect ? 1 : 0; };
+  if (animate) flyTo(v, done); else { cam = v; dirty = true; done(); }
+}
+function tourTick(){
+  if (!tour.active) return;
+  const a = A(), t = a.currentTime;
+  const i = stopAt(t);
+  if (i !== tour.idx) goStop(i);
+  const d = a.duration || DUR[lang];
+  $("fill").style.width = (100*t/d)+"%";
+  $("tcur").textContent = fmt(t);
+  $("bar").setAttribute("aria-valuenow", Math.round(t));
+  if (editMode) markEditRow();
+}
+function onEnded(){ updatePlay(); }
+function play(){
+  if (!tour.active){ tour.active = true; }
+  if (A().ended) A().currentTime = 0;
+  tour.attached = true; $("follow").hidden = true;
+  if (tour.idx >= 0) goStop(stopAt(A().currentTime));
+  A().play().catch(()=>{}); hideHint(); updatePlay();
+}
+function pause(){ A().pause(); updatePlay(); }
+function seek(t){
+  tour.active = true; tour.attached = true; $("follow").hidden = true;
+  A().currentTime = Math.max(0, Math.min((A().duration||DUR[lang])-0.1, t));
+  tour.idx = -1; tourTick(); updatePlay();
+}
+$("play").onclick = () => A().paused ? play() : pause();
+$("prev").onclick = () => { const i = tour.active ? stopAt(A().currentTime) : 0; const back = tour.active && A().currentTime - STOPS[i][lang].t > 3 ? i : Math.max(0,i-1); seek(STOPS[back][lang].t + 0.01); };
+$("next").onclick = () => { const i = tour.active ? stopAt(A().currentTime) : -1; if (i < STOPS.length-1) seek(STOPS[i+1][lang].t + 0.01); };
+$("follow").onclick = () => { tour.attached = true; $("follow").hidden = true; goStop(stopAt(A().currentTime)); };
+$("voice").onclick = () => { const on = $("voice").getAttribute("aria-pressed") !== "true";
+  $("voice").setAttribute("aria-pressed", on); Object.values(audios).forEach(a => a.muted = !on); };
+
+const bar = $("bar");
+function barSeek(e){ const r = bar.getBoundingClientRect(); seek(Math.max(0,Math.min(1,(e.clientX-r.left)/r.width))*(A().duration||DUR[lang])); }
+bar.addEventListener("pointerdown", e => { bar.setPointerCapture(e.pointerId); barSeek(e); bar.onpointermove = barSeek; });
+bar.addEventListener("pointerup", () => bar.onpointermove = null);
+bar.addEventListener("keydown", e => { if (e.key==="ArrowRight"){ seek(A().currentTime+5); e.preventDefault(); } if (e.key==="ArrowLeft"){ seek(A().currentTime-5); e.preventDefault(); } });
+
+function buildTicks(){
+  bar.querySelectorAll(".tick").forEach(t => t.remove());
+  const d = A().duration || DUR[lang];
+  STOPS.forEach((s,i) => { if (!i) return; const t = document.createElement("div"); t.className="tick"; t.style.left=(100*s[lang].t/d)+"%"; t.title=s[lang].name; bar.appendChild(t); });
+  bar.setAttribute("aria-valuemax", Math.round(d));
+  $("tdur").textContent = fmt(d);
+}
+function renderCaption(){
+  const i = tour.idx, u = UI[lang];
+  if (i < 0){ $("chip").textContent = STOPS[0][lang].name; $("desc").textContent = u.intro; $("count").textContent = ""; }
+  else { $("chip").textContent = STOPS[i][lang].name; $("desc").textContent = STOPS[i][lang].desc; $("count").textContent = (i+1)+"/"+STOPS.length; }
+  bar.querySelectorAll(".tick").forEach((t,k) => t.classList.toggle("on", k+1 === i));
+  requestAnimationFrame(layout);
+}
+function updatePlay(){
+  const u = UI[lang], a = A();
+  const playing = !a.paused && !a.ended;
+  $("playLabel").textContent = playing ? u.pause : (a.ended ? u.replay : (tour.active && a.currentTime>0 ? u.resume : u.start));
+  $("playIcon").innerHTML = playing ? '<path d="M2 1h3.5v12H2zM8.5 1H12v12H8.5z" fill="currentColor"/>' : '<path d="M2 1l11 6-11 6z" fill="currentColor"/>';
+}
+const fmt = s => { s = Math.max(0, s||0); return Math.floor(s/60)+":"+String(Math.floor(s%60)).padStart(2,"0"); };
+
+/* ---------- language ---------- */
+function setLang(l){
+  if (l === lang) return;
+  const old = A(), wasPlaying = !old.paused && !old.ended, t = old.currentTime;
+  const i = stopAt(t), s0 = STOPS[i][lang].t, s1 = (STOPS[i+1]||{})[lang]?.t ?? DUR[lang];
+  const frac = (t - s0)/(s1 - s0 || 1);
+  old.pause(); lang = l;
+  const n0 = STOPS[i][lang].t, n1 = (STOPS[i+1]||{})[lang]?.t ?? DUR[lang];
+  A().currentTime = tour.active ? n0 + Math.max(0,Math.min(1,frac))*(n1-n0) : 0;
+  if (wasPlaying) A().play().catch(()=>{});
+  document.documentElement.lang = l;
+  document.querySelectorAll(".lang button").forEach(b => b.setAttribute("aria-pressed", b.dataset.lang===l));
+  applyUI(); buildTicks(); renderCaption(); updatePlay();
+  if (editMode) buildEdit();
+  try { localStorage.setItem("kaart-lang", l); } catch(e){}
+}
+function applyUI(){
+  const u = UI[lang];
+  document.querySelectorAll("[data-t]").forEach(el => { if (u[el.dataset.t]) el.textContent = u[el.dataset.t]; });
+  [["zin","zin"],["zout","zout"],["zfit","zfit"],["prev","prev"],["next","next"]].forEach(([id,k]) => $(id).setAttribute("aria-label", u[k]));
+  bar.setAttribute("aria-label", u.progress);
+}
+document.querySelectorAll(".lang button").forEach(b => b.onclick = () => setLang(b.dataset.lang));
+audios.nl.addEventListener("loadedmetadata", () => lang==="nl" && buildTicks());
+audios.en.addEventListener("loadedmetadata", () => lang==="en" && buildTicks());
+
+/* ---------- keyboard ---------- */
+document.addEventListener("keydown", e => {
+  const tag = (e.target.tagName||"").toLowerCase();
+  if (tag==="input" || tag==="button" || e.target===bar) return;
+  if (e.key===" "){ e.preventDefault(); A().paused ? play() : pause(); }
+  else if (e.key==="ArrowRight") $("next").click();
+  else if (e.key==="ArrowLeft") $("prev").click();
+  else if (e.key==="+"||e.key==="=") zoomBtn(1.6);
+  else if (e.key==="-") zoomBtn(1/1.6);
+  else if (e.key==="0") $("zfit").click();
+});
+
+/* ---------- edit mode (#bewerk) ---------- */
+let editEl = null;
+function buildEdit(){
+  if (!editEl){ editEl = document.createElement("div"); editEl.className = "edit"; document.body.appendChild(editEl); }
+  editEl.innerHTML = `<h3>Rondleiding instellen (${lang.toUpperCase()})</h3>
+  <p>Speel de audio af. Klik <b>nu</b> om een stop op dit moment te laten beginnen, en <b>beeld</b> om het huidige kaartbeeld als uitsnede te bewaren. Wijzigingen blijven alleen in deze browser; kopieer ze om ze vast te leggen.</p>
+  ${STOPS.map((s,i)=>`<div class="row" data-i="${i}"><span>${i+1}. ${s.nl.name}</span><input type="number" step="0.1" value="${s[lang].t}" data-i="${i}"><button data-now="${i}">nu</button><button data-view="${i}">beeld</button></div>`).join("")}
+  <div class="acts"><button id="eCopy">Kopieer instellingen</button><button id="eReset">Herstel</button></div>`;
+  editEl.querySelectorAll("input").forEach(inp => inp.onchange = () => { STOPS[+inp.dataset.i][lang].t = parseFloat(inp.value)||0; saveEdit(); });
+  editEl.querySelectorAll("[data-now]").forEach(b => b.onclick = () => { STOPS[+b.dataset.now][lang].t = Math.round(A().currentTime*10)/10; saveEdit(); buildEdit(); });
+  editEl.querySelectorAll("[data-view]").forEach(b => b.onclick = () => {
+    const [x0,y0] = toWorld(safe.l,safe.t), [x1,y1] = toWorld(safe.r,safe.b);
+    STOPS[+b.dataset.view].rect = [x0,y0,x1,y1].map(Math.round); saveEdit(); });
+  $("eCopy").onclick = () => { const txt = JSON.stringify(STOPS.map(s=>({id:s.id, rect:s.rect, nl:s.nl.t, en:s.en.t}))); navigator.clipboard.writeText(txt).then(()=>{ $("eCopy").textContent="Gekopieerd"; }); };
+  $("eReset").onclick = () => { try{ localStorage.removeItem("kaart-stops"); }catch(e){} location.reload(); };
+}
+function saveEdit(){ buildTicks(); try { localStorage.setItem("kaart-stops", JSON.stringify(STOPS.map(s=>({rect:s.rect, nl:s.nl.t, en:s.en.t})))); } catch(e){} }
+function markEditRow(){ editEl && editEl.querySelectorAll(".row").forEach(r => r.classList.toggle("on", +r.dataset.i === tour.idx)); }
+
+/* ---------- start ---------- */
+addEventListener("resize", layout);
+layout();
+cam = viewFor(null);
+let startLang = "nl"; try { startLang = localStorage.getItem("kaart-lang") || ((navigator.language||"").startsWith("nl") ? "nl" : "nl"); } catch(e){}
+applyUI(); buildTicks(); renderCaption(); updatePlay();
+if (startLang !== "nl") setLang(startLang);
+if (editMode) buildEdit();
+requestAnimationFrame(loop);
+</script>
+</body>
+</html>

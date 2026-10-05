@@ -1,0 +1,84 @@
+---
+/* Works — the grid of all project folders (BASE: don't change unless asked). */
+import Base from "../layouts/Base.astro";
+import SITE from "../../content.js";
+import { getProjects } from "../lib/projects.js";
+
+const projects = getProjects();
+const used = SITE.categories.filter(c => projects.some(p => p.categories.includes(c)));
+---
+<Base tab="works">
+  {used.length > 1 && (
+    <div class="filters" id="filters">
+      <button type="button" class="toggle" aria-expanded="false" aria-controls="filter-options">Filter +</button>
+      <button type="button" class="clear" data-cat="" aria-label="Filter wissen" hidden>×</button>
+      <div class="options" id="filter-options" role="group" aria-label="Filter" hidden>
+        <button type="button" aria-pressed="true" data-cat="">Alles</button>
+        {used.map(c => <button type="button" aria-pressed="false" data-cat={c}>{c}</button>)}
+      </div>
+    </div>
+  )}
+
+  {projects.length ? (
+    <div class="grid" id="grid">
+      {projects.map(p => (
+        <a class="tile" href={p.url} data-cats={JSON.stringify(p.categories)}>
+          <span class="frame"><img src={p.thumbnail} alt="" loading="lazy" decoding="async"></span>
+          <span class="caption"><b>{p.title}</b><br><span>{[p.place, p.year].filter(Boolean).join(", ")}</span></span>
+        </a>
+      ))}
+    </div>
+  ) : null}
+  <p class="empty" id="empty" hidden={projects.length > 0}>{projects.length ? "Nog geen projecten in deze categorie." : "Nog geen projecten."}</p>
+</Base>
+
+<script is:inline>
+  // Old links (index.html#news, #about, #contact) → the new pages.
+  (m => m && location.replace("/" + m[1] + "/"))(location.hash.match(/^#(news|about|contact)/));
+</script>
+
+<script>
+  // Filter: one "Filter +" button; the filter words fold open next to it.
+  // The chosen filter is kept in the address (?filter=…), so "back" returns to it.
+  const box = document.getElementById("filters");
+  if (box) {
+    const toggle = box.querySelector<HTMLButtonElement>(".toggle")!;
+    const clear = box.querySelector<HTMLButtonElement>(".clear")!;
+    const options = box.querySelector<HTMLElement>(".options")!;
+    const tiles = [...document.querySelectorAll<HTMLElement>(".tile")];
+    const empty = document.getElementById("empty")!;
+    const known = [...options.querySelectorAll<HTMLElement>("[data-cat]")].map(b => b.dataset.cat);
+    let filter: string | null = new URLSearchParams(location.search).get("filter");
+    if (!known.includes(filter ?? "")) filter = null;
+    let open = false;
+
+    const render = () => {
+      toggle.textContent = open ? "Filter −" : filter ? `Filter: ${filter}` : "Filter +";
+      toggle.setAttribute("aria-expanded", String(open));
+      options.hidden = !open;
+      clear.hidden = !filter || open;
+      options.querySelectorAll<HTMLElement>("[data-cat]").forEach(b =>
+        b.setAttribute("aria-pressed", String((b.dataset.cat || null) === filter)));
+      let shown = 0;
+      for (const t of tiles) {
+        t.hidden = !!filter && !JSON.parse(t.dataset.cats!).includes(filter);
+        if (!t.hidden) shown++;
+      }
+      empty.hidden = shown > 0;
+    };
+
+    toggle.addEventListener("click", () => { open = !open; render(); });
+    box.addEventListener("click", e => {
+      const b = (e.target as HTMLElement).closest<HTMLElement>("[data-cat]");
+      if (!b) return;
+      filter = b.dataset.cat || null;
+      open = false;   // choosing a filter folds the list closed again
+      const url = new URL(location.href);
+      filter ? url.searchParams.set("filter", filter) : url.searchParams.delete("filter");
+      history.replaceState(null, "", url);
+      render();
+      toggle.focus();
+    });
+    render();
+  }
+</script>

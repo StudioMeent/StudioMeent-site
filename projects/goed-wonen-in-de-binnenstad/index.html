@@ -1,0 +1,543 @@
+<!doctype html>
+<html lang="nl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Goed Wonen in de Binnenstad</title>
+<meta name="description" content="Goed Wonen in de Binnenstad — ontwerpvoorstel van Platform Woonopgave voor de City Deal Dynamische Binnensteden, juli 2025.">
+<link rel="stylesheet" href="../../base/reset.css">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Work+Sans:wght@400;500;700;800;900&display=swap">
+<style>
+  :root {
+    --green: #1f9945;
+    --green-deep: #08953b;
+    --ink: #241f1f;
+    --paper: #ffffff;
+    --rule: 2px solid var(--green);
+    --gut: 16px;
+    color-scheme: light;
+  }
+  body {
+    background: var(--paper);
+    color: var(--ink);
+    font-family: "Work Sans", "Helvetica Neue", Arial, sans-serif;
+    font-size: 15px;
+    line-height: 1.38;
+    padding-inline: var(--gut);
+  }
+  img { max-width: 100%; display: block; }
+  a { color: inherit; }
+  p { margin: 0 0 .8em; }
+  p:last-child { margin-bottom: 0; }
+  h1, h2, h3, h4 { margin: 0; font-weight: 900; text-wrap: balance; }
+  .wrap { max-width: 1440px; margin: 0 auto; }
+  .up { text-transform: uppercase; }
+  .g { color: var(--green); }
+  u { text-underline-offset: 2px; }
+  s { text-decoration-thickness: 2px; }
+
+  /* ---------- masthead nav ---------- */
+  .nav {
+    position: sticky; top: env(safe-area-inset-top, 0px); z-index: 10;
+    background: var(--paper);
+    border-bottom: var(--rule);
+    margin-inline: calc(var(--gut) * -1);
+    padding: 10px var(--gut);
+  }
+  .nav .wrap { display: flex; gap: 6px 22px; flex-wrap: wrap; align-items: baseline; }
+  .nav b { font-weight: 900; font-size: 13px; letter-spacing: .02em; color: var(--green); margin-right: auto; }
+  .nav a {
+    font-size: 12px; font-weight: 800; text-transform: uppercase; letter-spacing: .04em;
+    text-decoration: none;
+  }
+  .nav a:hover, .nav a:focus-visible { color: var(--green); }
+  a:focus-visible { outline: 2px solid var(--green); outline-offset: 2px; }
+
+  /* ---------- folio (running header) ---------- */
+  .folio {
+    display: grid; grid-template-columns: 1fr auto 1fr;
+    font-size: 11px; font-weight: 900; text-transform: uppercase; letter-spacing: .02em;
+    padding: 34px 0 8px;
+  }
+  .folio span:nth-child(2) { text-align: center; }
+  .folio span:last-child { text-align: right; }
+
+  /* ---------- spread: two pages side by side ---------- */
+  .spread { display: grid; gap: 0; grid-template-columns: 1fr; }
+  .page { min-width: 0; }
+  .frame { border: var(--rule); }
+
+  /* green blocks */
+  .block {
+    background: var(--green); color: #fff;
+    font-weight: 900; text-transform: uppercase; line-height: .98;
+  }
+  .banner {
+    background: var(--green); color: #fff;
+    font-weight: 800; text-transform: uppercase; text-align: center;
+    font-size: clamp(17px, 1.9vw, 24px); line-height: 1.15; letter-spacing: .02em;
+    padding: 26px 24px;
+  }
+
+  /* ========== COVER ========== */
+  .cover-title { color: var(--green); padding-top: 18px; }
+  .fit { display: block; width: max-content; white-space: nowrap; font-weight: 900; line-height: .8; text-transform: uppercase; letter-spacing: -.01em; }
+  .fit.small { line-height: .95; margin-top: .12em; }
+  .cover-box { margin-top: clamp(40px, 7vw, 110px); border: var(--rule); }
+  .cover-box > h2 {
+    background: var(--green); color: #fff; font-weight: 500;
+    font-size: clamp(22px, 3.4vw, 46px); letter-spacing: .03em; line-height: 1.1;
+    padding: 10px 14px 8px; text-transform: uppercase;
+  }
+  .cover-grid { display: grid; grid-template-columns: 1fr; }
+  .cover-grid > * { padding: 14px; }
+  @media (min-width: 860px) {
+    .cover-grid { grid-template-columns: 1.95fr 2fr 1fr; }
+    .cover-grid > * + * { border-left: var(--rule); }
+  }
+  @media (max-width: 859px) { .cover-grid > * + * { border-top: var(--rule); } }
+  .ambitie h3 { font-size: inherit; font-weight: 400; }
+  .ambitie h3 u { text-decoration-thickness: 1px; }
+  .voorwie { color: var(--green); columns: 2 220px; column-gap: 18px; }
+  .voorwie .grp { break-inside: avoid; margin-bottom: 1em; }
+  .voorwie h3 { font-size: inherit; font-weight: 800; }
+  .voorwie .figs { height: 56px; margin: 10px 0 8px; display: flex; align-items: flex-end; }
+  .voorwie .figs img { height: 100%; width: auto; }
+  .colofon { display: flex; flex-direction: column; gap: 0; padding: 0 !important; }
+  .colofon > div { padding: 12px 14px; border-bottom: var(--rule); }
+  .colofon > div:last-child { border-bottom: 0; }
+  .colofon .lead { color: var(--green); font-weight: 800; text-transform: uppercase; font-size: 13px; line-height: 1.3; }
+  .credits { font-size: 11px; line-height: 1.35; }
+  .credits dt { font-weight: 800; text-transform: uppercase; margin-top: 8px; }
+  .credits dt:first-child { margin-top: 0; }
+  .credits dd { margin: 0; }
+  .logo-cd { max-width: 190px; }
+  .cc img { width: 160px; margin-bottom: 8px; }
+  .cc { font-size: 10px; font-weight: 800; text-transform: uppercase; }
+
+  /* ========== ACTIEAGENDA (p2) ========== */
+  .p2 { display: grid; grid-template-columns: 1fr; border: var(--rule); }
+  @media (min-width: 700px) { .p2 { grid-template-columns: 240px 1fr; } }
+  .side { border-right: var(--rule); }
+  @media (max-width: 699px) { .side { border-right: 0; border-bottom: var(--rule); } }
+  .side .block { font-size: 25px; text-align: center; padding: 18px 10px; line-height: 1.05; }
+  .side .block s { text-decoration-color: #fff; }
+  .quote { padding: 24px 14px; text-align: center; border-bottom: var(--rule); }
+  .quote blockquote { margin: 0; font-weight: 800; font-size: 25px; line-height: 1.12; }
+  .quote cite { display: block; font-style: normal; font-weight: 800; font-size: 16px; margin-top: 18px; line-height: 1.3; }
+  .side .text { color: var(--green); padding: 12px 14px 16px; font-size: 14.5px; }
+  .acties { display: grid; grid-template-columns: 1fr; gap: 0; padding: 8px 10px; }
+  @media (min-width: 1000px) { .acties { grid-template-columns: 1fr 1fr; column-gap: 28px; } }
+  .actie { display: grid; grid-template-columns: minmax(96px, 42%) 1fr; gap: 14px; padding: 14px 0; align-items: start; }
+  .actie img { width: 100%; aspect-ratio: 1; object-fit: contain; }
+  .actie h3 { font-size: 19px; font-weight: 900; line-height: 1.08; margin-bottom: 6px; }
+  .actie p { font-size: 13px; line-height: 1.4; hyphens: auto; }
+  .illcredit { font-size: 10px; padding: 0 10px 8px; text-align: right; }
+
+  /* ========== 10 PROJECTEN (p3) ========== */
+  .p3head { display: grid; grid-template-columns: 1fr; background: var(--green); border: var(--rule); }
+  @media (min-width: 700px) { .p3head { grid-template-columns: 1.55fr 1fr; } }
+  .p3head h2 { color: #fff; font-size: clamp(44px, 5.4vw, 80px); line-height: 1; padding: 12px 16px 8px; }
+  .p3head p { background: var(--paper); color: var(--green); padding: 8px 12px; font-size: 14px; margin: 0; }
+  .projecten { border: var(--rule); border-top: 0; padding: 10px 4px; display: grid; grid-template-columns: 1fr; }
+  @media (min-width: 700px) { .projecten { grid-template-columns: 1fr 1fr; column-gap: 20px; } }
+  .project { display: grid; grid-template-columns: 1fr; align-items: center; gap: 8px; padding: 8px 10px; }
+  @media (min-width: 1000px) {
+    .project { grid-template-columns: 1.1fr 1fr; gap: 16px; }
+    .project:nth-child(4n+2) img, .project:nth-child(4n+3) img { order: 2; }
+  }
+  .project h3 { display: flex; align-items: baseline; gap: 8px; font-weight: 800; font-size: 16px; line-height: 1.1; margin-bottom: 4px; }
+  .project h3 b { font-size: 38px; font-weight: 900; line-height: .9; }
+  .project p { font-size: 13px; line-height: 1.4; }
+
+  /* ========== CASE SPREADS (p4-7) ========== */
+  .casehead { display: grid; grid-template-columns: 1fr; border: var(--rule); }
+  @media (min-width: 700px) { .casehead { grid-template-columns: 2.9fr 1fr; } }
+  .casehead .titel { display: flex; flex-direction: column; }
+  .casehead .block { font-size: clamp(38px, 4.3vw, 66px); padding: 14px 16px 12px; text-align: center; flex: 1; display: grid; place-items: center; }
+  .casehead .sub { font-size: clamp(16px, 1.45vw, 20px); font-weight: 800; text-transform: uppercase; text-align: center; padding: 16px 14px; border-top: var(--rule); line-height: 1.15; }
+  .casehead .intro { padding: 10px 12px; font-size: 14px; hyphens: auto; }
+  @media (min-width: 700px) { .casehead .intro { border-left: var(--rule); } }
+  @media (max-width: 699px) { .casehead .intro { border-top: var(--rule); } }
+  .overview { border: var(--rule); border-top: 0; padding: 10px; display: grid; gap: 10px; }
+  @media (min-width: 900px) { .overview { grid-template-columns: 1fr 1fr; align-items: center; } }
+
+  .right { display: grid; grid-template-columns: 1fr; border: var(--rule); }
+  @media (min-width: 760px) { .right { grid-template-columns: 1fr 240px; } }
+  .details { display: grid; grid-template-columns: 1fr 1fr; }
+  .detail { position: relative; grid-column: span 2; border-bottom: var(--rule); overflow: hidden; }
+  .detail.half { grid-column: span 1; }
+  .detail.half + .detail.half { border-left: var(--rule); }
+  .detail img { width: 100%; height: 100%; object-fit: cover; }
+  .cap {
+    position: absolute; top: 0; left: 0; width: min(34%, 280px);
+    background: var(--paper); border: var(--rule); border-top: 0; border-left: 0;
+    font-size: 12.5px; line-height: 1.35; padding: 8px 10px;
+  }
+  .detail.half .cap { width: min(62%, 280px); }
+  .cap b { display: block; font-weight: 900; }
+  @media (max-width: 620px) {
+    .detail.half { grid-column: span 2; }
+    .detail.half + .detail.half { border-left: 0; }
+    .cap, .detail.half .cap { position: static; width: auto; border: 0; border-top: var(--rule); font-size: 12px; }
+  }
+  .details .banner { grid-column: span 2; display: grid; place-items: center; min-height: 120px; }
+  .details .banner.case { text-transform: none; font-weight: 800; font-size: clamp(20px, 2.1vw, 30px); line-height: 1.12; }
+
+  .strat { border-left: var(--rule); display: flex; flex-direction: column; }
+  @media (max-width: 759px) { .strat { border-left: 0; border-top: var(--rule); } }
+  .strat .block { font-size: 20px; text-align: center; padding: 22px 10px; line-height: 1.1; }
+  .strat h3 { font-size: 22px; font-weight: 900; text-transform: uppercase; text-align: center; padding: 18px 10px; border-top: var(--rule); border-bottom: var(--rule); line-height: 1.08; }
+  .strat h3.big { font-size: 27px; }
+  .strat .text { color: var(--green); font-size: 13.5px; padding: 8px 10px 12px; hyphens: auto; }
+  .steps { display: grid; gap: 2px; padding: 10px 14px; justify-items: center; }
+  .steps img { width: 100%; max-width: 170px; }
+  .mark { font-weight: 900; font-size: 15px; line-height: 1; }
+  .mark.no { color: #e0312b; }
+  .mark.yes { color: var(--green); }
+  .steps figure { margin: 0; width: 100%; max-width: 190px; }
+  .steps figcaption { font-size: 10.5px; margin-bottom: 2px; }
+  @media (max-width: 759px) {
+    .steps.row { grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); align-items: end; }
+  }
+
+  /* ========== P8 ========== */
+  .p8 { display: grid; grid-template-columns: 1fr; border: var(--rule); }
+  @media (min-width: 900px) { .p8 { grid-template-columns: minmax(280px, 1fr) 2.6fr; } }
+  .baten { border-right: var(--rule); }
+  @media (max-width: 899px) { .baten { border-right: 0; border-bottom: var(--rule); } }
+  .baten .block { font-size: 24px; text-align: center; padding: 20px 12px; line-height: 1.08; }
+  .baten .list { padding: 10px 12px; color: var(--green); }
+  .baat { display: grid; grid-template-columns: 1fr 76px; gap: 10px; margin-bottom: 16px; align-items: start; font-size: 14px; }
+  .baat h3 { font-size: inherit; font-weight: 800; }
+  .baat img { width: 76px; margin-top: 18px; }
+  .baat .bron { font-size: 11px; overflow-wrap: anywhere; margin-top: 4px; }
+  .baat.plain { grid-template-columns: 1fr; }
+  .realiteit { padding: 0; }
+  .realiteit h2 { font-size: clamp(28px, 3.2vw, 44px); text-align: center; line-height: 1.05; padding: 24px 16px 20px; border-bottom: var(--rule); text-transform: uppercase; }
+  .realiteit .body { padding: 14px 16px 20px; max-width: 78ch; }
+  .realiteit h3 { font-size: inherit; font-weight: 800; margin-top: 1.4em; margin-bottom: .1em; }
+
+  .end { display: flex; justify-content: space-between; flex-wrap: wrap; gap: 8px; font-size: 11px; font-weight: 900; text-transform: uppercase; padding: 28px 0 40px; }
+</style>
+
+<!-- Studio Meent back button, provided by the website base. Keep this line. -->
+<script src="../../base/back-button.js" data-position="bottom-left" defer></script>
+</head>
+<body>
+
+<nav class="nav" aria-label="Inhoud">
+  <div class="wrap">
+    <b>GOED WONEN IN DE BINNENSTAD</b>
+    <a href="#voorwie">Voor wie</a>
+    <a href="#actieagenda">Actieagenda</a>
+    <a href="#projecten">10 projecten</a>
+    <a href="#transformatie">Transformatie</a>
+    <a href="#daklandschap">Daklandschap</a>
+    <a href="#realiteit">Realiteit</a>
+  </div>
+</nav>
+
+<main class="wrap">
+
+<!-- ================= COVER ================= -->
+<header class="cover-title" aria-label="Goed wonen in de binnenstad">
+  <h1>
+    <span class="fit">Goed</span>
+    <span class="fit">Wonen</span>
+    <span class="fit small">In de binnenstad</span>
+  </h1>
+</header>
+
+<section class="cover-box" id="voorwie">
+  <h2>City Deal Dynamische Binnensteden</h2>
+  <div class="cover-grid">
+    <div class="ambitie">
+      <p>Platform Woonopgave werd gevraagd door de City Deal Dynamische Binnensteden om een ontwerpvoorstel te maken rondom het thema de ‘veerkrachtige’ binnenstad. Op het gebied van wonen vertaalt zich dat in een aantal veerkrachtige ambities:</p>
+      <h3>Het verhogen van de <u>sociale veerkracht</u>:</h3>
+      <p>De binnenstad is meestal een plek met weinig sociale veerkracht; er is hier minder sprake van sterke gemeenschappen tussen bewoners. De verhuisbewegingen zijn hoog, de woningen vaak minder geschikt voor gezinnen met kinderen en er is een gebrek aan buurthuizen.</p>
+      <h3>Het verbeteren van de <u>klimatologische veerkracht</u>:</h3>
+      <p>De binnenstad is bij uitstek de plek in de stad met de hoogste hittestress. Hier bevindt zich relatief weinig groen en bij grote regenval staan hier de straten snel blank. De binnenstad is misschien wel de plek met de hoogste nood aan klimaatadaptieve maatregelen.</p>
+      <h3>Het verbreden van de <u>economische veerkracht</u>:</h3>
+      <p>De economische veerkracht van de binnenstad is doorgaans hoog. Maar voor wie? Betaalbaar wonen is in de meeste binnensteden een onhaalbare kaart. De huizenprijzen zijn per vierkante meter vaak het hoogst van de hele stad. Wordt daarmee de binnenstad een exclusief woongebied? Enkel voor rijke expats of rijke jonge mensen voor wie hun ouders een woning kopen? Of moet de binnenstad juist een afspiegeling zijn van de maatschappij? Waar ook voor lagere inkomens een plek is?</p>
+      <h3>Het bestendigen van de <u>functionele veerkracht</u>:</h3>
+      <p>Binnensteden zijn door de tijd al vaak van functie veranderd. Door de jaren heen is de industrie uit de stad verdwenen en kwam er steeds meer ruimte voor winkels. Veel panden zijn in de loop van de tijd gebruikt als woning, kantoor of hotel. Binnensteden maken zich zorgen dat de druk op wonen deze flexibiliteit zal wegnemen. Het is daarmee van belang om te sturen op nieuwbouw of transformaties die in de tijd opnieuw om te vormen zijn tot andere functies.</p>
+    </div>
+
+    <div class="voorwie">
+      <div class="grp">
+        <h3>VOOR WIE?</h3>
+        <p>Voor welke doelgroepen kan de binnenstad een geschikte plek zijn om te wonen? Hoe kunnen deze doelgroepen de binnenstad verlevendigen en wat hebben zij nodig?</p>
+      </div>
+      <div class="grp">
+        <div class="figs"><img src="img/fig-vitale.png" alt=""></div>
+        <h3>1. Vitale ouderen</h3>
+        <p>Dit zijn jonge empty nesters, die vaak een actief sociaal leven hebben. Ze willen wel kleiner wonen, maar in de buurt van voorzieningen en het OV. Bij voorkeur is de woning levensloopbestendig en zijn er gedeelde voorzieningen zoals een tuin, buurtkamer en logeerkamers voor de (klein)kinderen.</p>
+      </div>
+      <div class="grp">
+        <div class="figs"><img src="img/fig-jonge.png" alt=""></div>
+        <h3>2. <s>Starters</s> Jonge blijvers</h3>
+        <p>In een goede en betaalbare woning kunnen starters prima 5-10 jaar wonen. Daarom spreken we liever van ‘jonge blijvers’. Zij hebben een woning nodig die flexibel genoeg is om mee te bewegen met verschillende levensfases. Waar je alleen kan wonen, maar ook goed met twee en zelfs met een eerste kind. Daarnaast hebben ze behoefte aan gedeelde voorzieningen zoals een terras, sportruimte en werkruimte.</p>
+      </div>
+      <div class="grp">
+        <div class="figs"><img src="img/fig-makers.png" alt=""></div>
+        <h3>3. Makers</h3>
+        <p>Ooit was de binnenstad een plek waar ‘gemaakt’ werd. Veel steden proberen opnieuw ruimte te bieden aan de maakindustrie. Hier horen dus ook woningen voor makers bij. Dit kunnen flexibele woningen zijn met de mogelijkheid te voorzien in een thuiswerkplek of studio. Werkruimtes zijn ook onderdeel van de gedeelde voorzieningen.</p>
+      </div>
+      <div class="grp">
+        <div class="figs"><img src="img/fig-coop.png" alt=""></div>
+        <h3>4. Coöperatieve collectieven</h3>
+        <p>In steden zijn er veel groepen van woningzoekenden die graag samen een wooncoöperatie zouden oprichten. Ideaal voor een plek als de binnenstad waar het gemeenschapsgevoel doorgaans laag is. Dit vraagt om diverse woningen, maar vooral om de eigen inbreng van de toekomstige bewoners. De woonwensen en wensen voor de collectieve voorzieningen zal per groep verschillen.</p>
+      </div>
+    </div>
+
+    <aside class="colofon">
+      <div class="lead" style="color:var(--ink)">Juli 2025</div>
+      <div class="lead">Dit is een project van Platform Woonopgave</div>
+      <div class="lead">Voor City Deal Dynamische Binnensteden, een initiatief van Agenda Stad
+        <img class="logo-cd" src="img/logo-citydeal.png" alt="City Deal Dynamische Binnensteden, Agenda Stad" style="margin-top:14px">
+      </div>
+      <div>
+        <dl class="credits">
+          <dt>Team Platform Woonopgave:</dt><dd>Sanne van Manen<br>Kaan Smits</dd>
+          <dt>Extern advies:</dt><dd>Annius Hoornstra</dd>
+          <dt>Team City Deal</dt><dd>Jurian Strik<br>Jos Sentel<br>Erik van Bemmelen<br>Christopher Baan</dd>
+          <dt>Illustraties actieagenda:</dt><dd>Stang Gubbels</dd>
+          <dt>Met dank aan:</dt><dd>Djacco van den Bosch<br>Annelies Goorts</dd>
+        </dl>
+      </div>
+      <div class="cc"><img src="img/cc.png" alt="Creative Commons BY-NC-ND">Op deze publicatie zit een Creative Commons license: CC-BY-NC-ND</div>
+    </aside>
+  </div>
+</section>
+
+<!-- ================= SPREAD 2–3 ================= -->
+<div class="spread" id="actieagenda">
+  <div class="page">
+    <div class="folio"><span>Platform Woonopgave</span><span>Goed wonen</span><span>2</span></div>
+    <div class="p2">
+      <aside class="side">
+        <div class="block"><s>Bouwen,<br>bouwen,<br>bouwen</s></div>
+        <div class="quote">
+          <blockquote>‘Het is de kunst om nú van richting te veranderen’</blockquote>
+          <cite>- Floris Alkemade (congres Dynamische Binnensteden)</cite>
+        </div>
+        <div class="text">
+          <p>Platform Woonopgave is een groeiend collectief van ontwerpers, ontwikkelaars, bouwers, beleidsmakers, corporaties, (toekomstige) bewoners en een ieder die zich bezig houdt met de woonopgave.</p>
+          <p>We zoeken naar alternatieve oplossingen voor de wooncrisis die wél betaalbaar, duurzaam, toekomstbestendig en gemeenschappelijk zijn. Daarbij vinden we het van groot belang om alle kennis en informatie die we tegenkomen en ontwikkelen open source -onder creative commons- via de website <a href="https://www.platformwoonopgave.nl">www.platformwoonopgave.nl</a> te delen.</p>
+          <p>De enkelzijdige focus van het ‘bouwen, bouwen, bouwen’ op aantallen en versnellen, werkt niet. De aantallen worden niet gehaald en het bouwen wordt steeds meer bedreigd door netcongestie, stikstof, drinkwatertekorten, de limieten van de bodem, de waterkwaliteit en het einde van ons carbon budget. Daarnaast zorgt de woningmarkt voor steeds meer ongelijkheid. Terwijl (jonge) mensen gedwongen worden te hoge huur te betalen in de vrije sector, houden eigen woningbezitters geld over om hun woning te verduurzamen.</p>
+          <p>Wij geloven dat juist een integrale blik en het samenbrengen van andere opgaves zoals zorg, klimaat, sociale gelijkheid, energie en leefbaarheid, de oplossing kan bieden. Daarnaast beamen we wat Floris Alkemade in zijn lezing op het congres Dynamische Binnensteden zei ‘het is de kunst om nu van richting te veranderen’. We moeten nu de knoppen van ons woonbeleid in een andere richting draaien om te zorgen dat er echt een toekomstbestendige oplossing voor de wooncrisis komt.</p>
+        </div>
+      </aside>
+      <div>
+        <div class="acties">
+          <article class="actie"><img src="img/ill-1.png" alt=""><div><h3>1. Eerst woningen vinden, dan pas nieuwe bouwen</h3><p>De woonopgave begint in de bestaande bebouwing. Er zijn nog zo’n 1 tot 2 miljoen woningen te ‘vinden’ via herverdeling van bestaande (woon)ruimte (zie analyse platform woonopgave). Zo bestaat slechts 26% van de huishoudens uit gezinnen van 4 of meer personen, terwijl 65% van de woningen gezinswoningen zijn. Strategieën zoals woningsplitsing, transformatie, renovatie, kavelsplitsing en optoppen zijn cruciaal. Wonen vinden is duurzamer en sneller dan bouwen met minder stikstof- en CO<sub>2</sub>-uitstoot.</p></div></article>
+          <article class="actie"><img src="img/ill-6.png" alt=""><div><h3>6. Anticipeer nú op de toekomst</h3><p>Woningen gaan lang mee. We bouwen ze niet alleen voor de eerste bewoners maar ook voor vele generaties daarna. Daarom moeten we nú anticiperen op de geschiktheid van de bodem over 50 jaar, de mogelijke zeespiegelstijging, wateroverlast of andere woonvormen passend bij toekomstige woonbehoeftes. Als we dat niet doen, komen de kosten hiervoor bij de toekomstige bewoners terecht.</p></div></article>
+          <article class="actie"><img src="img/ill-2.png" alt=""><div><h3>2. Iedereen een betaalbare woning, nu en later</h3><p>Wat de overheid als ‘betaalbaar’ definieert is onbetaalbaar met een modaal inkomen: voor ‘middenhuur’ of de ‘betaalbare’ koopwoning van €405.000 (!) zijn ruim twee salarissen nodig. De wachttijden voor een sociale huurwoning zijn eindeloos, wat mensen dwingt tot hoge huren in de vrije sector. Zelfs simpele rijtjeswoningen, die ooit betaalbaar waren, zijn nu onbetaalbaar geworden. Er moeten betaalbare woningen bijkomen, die ook in de toekomst betaalbaar blijven.</p></div></article>
+          <article class="actie"><img src="img/ill-7.png" alt=""><div><h3>7. Stuur op andere waarden dan winst in €</h3><p>De woonopgave is nu vooral financieel gedreven en wordt te veel benaderd als een vastgoedvraagstuk. Wat ontbreekt is een integrale, maatschappelijke aanpak. Een goede woon- en leefomgeving vermindert stress, bevordert gezondheid, voorkomt eenzaamheid en klimaatschade, versterkt gemeenschappen en voorkomt dakloosheid. Dat bespaart de samenleving miljarden. De gezondheidszorg staat onder druk door een groeiend tekort aan personeel. Een doordachte woonaanpak kan die druk helpen verlichten.</p></div></article>
+          <article class="actie"><img src="img/ill-3.png" alt=""><div><h3>3. Niet slopen maar herstellen</h3><p>Materialen zijn schaars en duur, en grondstoffen raken op. Renoveren in plaats van slopen is zelfs duurzamer dan duurzame nieuwbouw. Slopen vernietigt naast grondstoffen ook geschiedenis en sociale structuren. Bovendien verhoogt sloop de benodigde aantallen; naast nieuwe woningen moeten we ook toevoegen ter vervanging. Door een sloopverbod wordt het vanzelfsprekender om te investeren in bestaande gebouwen en verloedering of leegstand te voorkomen.</p></div></article>
+          <article class="actie"><img src="img/ill-8.png" alt=""><div><h3>8. Zet bewoner en woonkwaliteit centraal</h3><p>Woonkwaliteit gaat niet over ‘mooi’, maar over ‘goed’. Door de nadruk op aantallen en snelheid is de noodzaak van een goede woning ondergesneeuwd. Veel appartementen zijn diepe woningen aan donkere gangen, met daglicht van slechts één kant. Een goede woning heeft een slimme plattegrond, voldoende daglicht en ruimte, en is flexibel. Het gebouw biedt plek voor ontmoeting, en bewoners hebben zeggenschap over hun woon- en leefomgeving. Zo bouwen we aan duurzame gemeenschappen.</p></div></article>
+          <article class="actie"><img src="img/ill-4.png" alt=""><div><h3>4. Maak nieuwbouw duurzaam en gezond</h3><p>Wat we nieuw bouwen, moet duurzaam en gezond zijn en de aarde niet verder schaden. Toch komen vervuilende materialen vaak nog goed uit in zogenaamd ‘groene’ meetmethodes. De bouw moet echt omschakelen. Duurzaam bouwen is allang mogelijk: er zijn talloze voorbeelden met biobased materialen, hergebruik en stikstofvrije bouwmethodes. Een duurzame woning is ook een gezonde woning. Zowel fysiek (goed binnenklimaat, prettige materialen) als mentaal (geen zorgen om de energierekening).</p></div></article>
+          <article class="actie"><img src="img/ill-9.png" alt=""><div><h3>9. Maak ruimte voor experiment en onderzoek</h3><p>Terwijl huishoudens steeds diverser worden, blijven woningen standaardproducten. Er is een gevarieerder woningaanbod nodig dat aansluit op de samenstelling van huishoudens en hun woonbehoeftes, nu en in de toekomst. Dit vraagt om creativiteit en experiment. Marktpartijen zijn huiverig vanwege risico’s en kosten. Woningcorporaties mijden het experiment omdat kennis en kunde ontbreken. Daarnaast is ruimte nodig om te experimenteren met alternatieve ontwikkelmodellen en bouwmethodes.</p></div></article>
+          <article class="actie"><img src="img/ill-5.png" alt=""><div><h3>5. Bijbouwen in wijken, niet in weilanden</h3><p>De kosten voor buitenstedelijk bouwen lijken lager, maar door bijkomende uitgaven voor infrastructuur, grondwerk en klimaatschade zijn ze uiteindelijk veel hoger. Binnenstedelijk is volgens onderzoek van Platform Woonopgave nog ruimte voor zeker 2 miljoen extra woningen. De focus ligt daar nu vaak op grootschalige gebiedsontwikkelingen, terwijl juist in bestaande wijken kansen liggen om opgaven te koppelen: verduurzaming, impulsen voor de energie- en mobiliteitstransitie en meer leefbaarheid.</p></div></article>
+          <article class="actie"><img src="img/ill-10.png" alt=""><div><h3>10. Make volkshuisvesting great again</h3><p>Nederland was ooit het land van innovatieve volkshuisvesting met de Amsterdamse School of het Justus van Effencomplex in Rotterdam. Nu is volkshuisvesting vervangen door de woningmarkt. De ongelijkheid binnen het huidige woonsysteem neemt toe. Terwijl (jonge) mensen gedwongen worden hoge huren te betalen in de vrije sector, houden anderen geld over om hun koopwoning te verduurzamen. De subsidie op eigen woningbezit (de hypotheekrenteaftrek) is nog steeds vele malen hoger dan het totaal aan huurtoeslag.</p></div></article>
+        </div>
+        <div class="illcredit">Illustraties: Stang Gubbels</div>
+      </div>
+    </div>
+    <div class="banner">We zoeken naar alternatieve oplossingen op de wooncrisis die wél betaalbaar, duurzaam, toekomstbestendig en gemeenschappelijk zijn. #hoekanhetwel</div>
+  </div>
+
+  <div class="page" id="projecten">
+    <div class="folio"><span>3</span><span>In de binnenstad</span><span>City Deal</span></div>
+    <div class="p3head">
+      <h2>10 PROJECTEN</h2>
+      <p>In de eerste fase van de studie hebben we 10 typisch stedelijke woonprojecten ontworpen. De tien projecten spelen in op typische situaties van de binnenstad zoals een leeg warenhuis of rommelig binnengebied. Elk voorstel is verbonden met meerdere punten uit de actieagenda en zorgt ervoor dat de binnenstad zowel sociaal, economisch, functioneel, als op het gebied van klimaat, veerkrachtiger wordt.</p>
+    </div>
+    <div class="projecten">
+      <article class="project"><img src="img/proj-1.jpg" alt="Isometrie: de gemixte winkelstraat"><div><h3><b>1.</b> De gemixte winkelstraat</h3><p>De verdiepingen boven winkels staan vaak leeg. Volgens de Stec Group ligt hier landelijk een potentie om 70.000 extra woningen toe te voegen. Hiervoor is een nieuwe ontsluiting nodig (wat een behoorlijke investering is), maar het maakt de winkelstraten met name ’s avonds een stuk prettiger.</p></div></article>
+      <article class="project"><img src="img/proj-2.jpg" alt="Isometrie: het nieuwe woonhuis"><div><h3><b>2.</b> Het nieuwe woonhuis</h3><p>Door de verschuiving naar online winkelen staan grote warenhuizen leeg. Deze zijn moeilijk te transformeren. Maar met de juiste ingrepen (zoals een groot atrium) levert dit prachtige woongebouwen op, met behoud van materialen en de cultuur-historische waarde van het warenhuis. In de plint komt nieuwe ruimte voor meer kleinschalige retail.</p></div></article>
+      <article class="project"><img src="img/proj-3.jpg" alt="Isometrie: het dakdorp"><div><h3><b>3.</b> Het dakdorp</h3><p>In de (binnen)stad staan vaak grote panden, zoals parkeergarages, met grote lege daken. Deze lenen zich perfect om ontwikkeld te worden (bij voorkeur coöperatief met betrokken bewoners) tot prettige groene woongemeenschappen die ook ruimte bieden aan gezinnen.</p></div></article>
+      <article class="project"><img src="img/proj-4.jpg" alt="Isometrie: het collectieve belastingterrein"><div><h3><b>4.</b> Het collectieve belastingterrein</h3><p>Elke stad heeft ergens wel een groot leegstaand kantoorpand met terrein eromheen. Bijvoorbeeld oude belastingkantoren. In plaats van commerciële verkoop kan dit een Community Land Trust worden. De grond komt in bezit van de Trust waar de gemeente, de bewoners, ondernemers en zorgpartijen in verenigd zijn. De woningen zijn en blijven betaalbaar.</p></div></article>
+      <article class="project"><img src="img/proj-5.jpg" alt="Isometrie: de coöperatieve spoorzone"><div><h3><b>5.</b> De coöperatieve spoorzone</h3><p>Lege en lastig te ontwikkelen plekken, zoals reststukken langs het spoor, kunnen verantwoord tegen lagere grondprijzen aan coöperaties worden verkocht. Zij moeten voldoen aan eisen tegen spoorlawaai, maar omdat bewoners meedenken en de gebouwen veel collectieve ruimtes hebben, is een oplossing waarschijnlijker dan reguliere ontwikkeling.</p></div></article>
+      <article class="project"><img src="img/proj-6.jpg" alt="Isometrie: inbreiding in het stadsblok"><div><h3><b>6.</b> Inbreiding in het stadsblok</h3><p>Stadsblokken hebben vaak een rommelige binnenzijde met bergingen, parkeerplaatsen en allerhande ongebruikte ruimte. Soms zijn dit plekken waar ondermijning plaatsvindt. Het loont dan dit binnengebied op te ruimen (of meer efficiënt in te richten) om zo ruimte te maken voor collectief wonen.</p></div></article>
+      <article class="project"><img src="img/proj-7.jpg" alt="Isometrie: de menselijke hoogbouw"><div><h3><b>7.</b> De menselijke hoogbouw</h3><p>Veel steden kennen een vorm van hoogbouw. Of het nu 50 meter hoog is of 120 meter, het is vaak een typologie waarin bewoners anoniem naast elkaar leven. Daarom moet juist hier ingezet worden op een menselijke plint met een buurthuis, levendige gevel en collectieve publieke daktuin.</p></div></article>
+      <article class="project"><img src="img/proj-8.jpg" alt="Isometrie: de gedeelde singel"><div><h3><b>8.</b> De gedeelde singel</h3><p>Veel steden hebben straten met grote statige panden, deels omgezet naar kantoren voor advocaten en notarissen, maar deels ook nog bewoond. Vaak zijn dit grote woningen waar meerdere slaapkamers -na vertrek van kinderen- leeg staan. Kan dat nog? Of is er een cultuurverandering nodig die het eerlijk verdelen van de woonruimte bespreekbaar maakt?</p></div></article>
+      <article class="project"><img src="img/proj-9.jpg" alt="Isometrie: het levendige parkeerterrein"><div><h3><b>9.</b> Het levendige parkeerterrein</h3><p>Binnenstedelijke parkeerterreinen zijn zonde van de ruimte. Door meer efficiënt te parkeren en (deels) te vervangen door deelvervoer met een Mobility HUB komt er ruimte vrij voor wonen, openbare ruimte en groen.</p></div></article>
+      <article class="project"><img src="img/proj-10.jpg" alt="Isometrie: van verkeer naar woonstraat"><div><h3><b>10.</b> Van verkeer naar woonstraat</h3><p>Sommige steden kennen expeditiehoven: ooit bedoeld voor laden en lossen, nu vaak gebruikt voor parkeren of ongure zaken, omdat ze te klein zijn voor moderne vrachtwagens. Deze kunnen getransformeerd worden tot prachtige woonerven waar kinderen veilig buiten kunnen spelen.</p></div></article>
+    </div>
+  </div>
+</div>
+
+<!-- ================= SPREAD 4–5 ================= -->
+<div class="spread" id="transformatie">
+  <div class="page">
+    <div class="folio"><span>Platform Woonopgave</span><span>Goed wonen</span><span>4</span></div>
+    <div class="casehead">
+      <div class="titel">
+        <h2 class="block">Transformatie &amp; binnengebied</h2>
+        <div class="sub">Zet in op het behoud van het bestaande, slopen is verleden tijd</div>
+      </div>
+      <p class="intro">In de tweede fase van de studie hebben we de typologieën geprojecteerd op twee werkelijke situaties. In de eerste stellen we voor een leegstaand kantoorpand te transformeren naar een mix van functies. Van de achterliggende parkeergarage wordt een klein deel weggehaald en woningen toegevoegd. Het lege dak krijgt een groene invulling en wordt via trappen verbonden aan bestaande woningen. Het binnengebied verandert van onguur naar een fijne verblijfsplaats.</p>
+    </div>
+    <div class="overview">
+      <img src="img/p4-top.jpg" alt="Isometrie van het bouwblok in de huidige situatie">
+      <img src="img/p4-bottom.jpg" alt="Isometrie van het bouwblok na transformatie">
+    </div>
+  </div>
+
+  <div class="page">
+    <div class="folio"><span>5</span><span>In de binnenstad</span><span>City Deal</span></div>
+    <div class="right">
+      <div class="details">
+        <figure class="detail" style="margin:0"><img src="img/p5-1.jpg" alt=""><figcaption class="cap"><b>1. Gemixt programma</b>Het kantoorpand wordt getransformeerd naar een mix van functies. Voorzieningen en kleine retail in de plint, daarboven ruimte voor makers en daarboven een mix van woningen. Het pand verkeert nog in goede staat en is qua maatvoering prima om te vormen tot woningen. De bovenste lagen zijn verbreed om meer woonruimte te creëren.</figcaption></figure>
+        <figure class="detail" style="margin:0"><img src="img/p5-2.jpg" alt=""><figcaption class="cap"><b>2. Fijn wonen</b>In het binnengebied komen diverse woningen. Dit is een rustige groene plek midden in de binnenstad. Het ondergelegen bestaande winkelcentrum krijgt een nieuwe open gevel.</figcaption></figure>
+        <figure class="detail" style="margin:0"><img src="img/p5-3.jpg" alt=""><figcaption class="cap"><b>3. Buurt dakpark</b>Het dak van de parkeergarage, die nu vaak leeg staat, wordt vergroend. Hier komen voorzieningen voor de buurt zoals een moestuin en speelgelegenheid. Het groene dak speelt ook een belangrijke rol in de klimaatadaptatie van de binnenstad.</figcaption></figure>
+        <figure class="detail" style="margin:0"><img src="img/p5-4.jpg" alt=""><figcaption class="cap"><b>4. Toegankelijk dakpark</b>Via trappen worden bestaande woongebouwen aangesloten op de collectieve buitenruimte. Zo verbindt het dak bestaande en nieuwe bewoners en ontstaat een plek voor de gemeenschap.</figcaption></figure>
+        <figure class="detail half" style="margin:0"><img src="img/p5-5.jpg" alt=""><figcaption class="cap"><b>5. Terrassen</b>Het bestaande pand heeft een sculpturale vorm die ruimte biedt aan collectieve groene dakterrassen.</figcaption></figure>
+        <figure class="detail half" style="margin:0"><img src="img/p5-6.jpg" alt=""><figcaption class="cap"><b>6. Stadsbalkon</b>Aan de voorzijde (uitkijkend op het station) ontstaat een levendig stadsbalkon waar bewoners en andere gebruikers van het pand samen komen.</figcaption></figure>
+        <div class="banner">Het nieuwe parkdak verbindt bestaande en nieuwe bewoners. Het is een plek voor de buurt.</div>
+      </div>
+      <aside class="strat">
+        <div class="block">Ruimtelijke strategieën</div>
+        <h3>Transformatie bij leegstand</h3>
+        <div class="steps">
+          <img src="img/p5-s1.jpg" alt="Leegstaand kantoorpand">
+          <span class="mark">↓</span>
+          <img src="img/p5-s2.jpg" alt="Volledig wonen">
+          <span class="mark no">×</span>
+          <img src="img/p5-s3.jpg" alt="Mix van functies">
+          <span class="mark yes">✓</span>
+        </div>
+        <p class="text">Transformeer niet zomaar alle gebouwen van volledig kantoor naar volledig wonen, maar zet in op een mix van functies met een levendige plint van voorzieningen. Behoud de flexibiliteit van het gebouw.</p>
+        <h3>Wonen in binnengebieden</h3>
+        <div class="steps">
+          <img src="img/p5-s4.jpg" alt="Bouwblok met rommelig binnengebied">
+          <span class="mark">↓</span>
+          <img src="img/p5-s5.jpg" alt="Binnengebied opgeschoond">
+          <span class="mark">↓</span>
+          <img src="img/p5-s6.jpg" alt="Woongemeenschap rond een binnentuin">
+        </div>
+        <p class="text">Zet niet in op losse woningen, maar maak een woongemeenschap, met een centrale binnentuin waar alle voordeuren aan zitten. Ook het wonen boven winkels kan via een binnengebied ontsloten worden.</p>
+      </aside>
+    </div>
+  </div>
+</div>
+
+<!-- ================= SPREAD 6–7 ================= -->
+<div class="spread" id="daklandschap">
+  <div class="page">
+    <div class="folio"><span>Platform Woonopgave</span><span>Goed wonen</span><span>6</span></div>
+    <div class="casehead">
+      <div class="titel">
+        <h2 class="block">Activatie van het daklandschap</h2>
+        <div class="sub">Ruimtes die eindelijk een kans krijgen</div>
+      </div>
+      <p class="intro">De tweede situatie betreft een daklandschap van een aantal lege daken. Dit zijn daken van verschillende grote retailpanden die met elkaar verbonden worden door het dak van twee parkeergarages. Hierop projecteren we verschillende woongemeenschappen die met elkaar verbonden zijn. Het dak van de parkeergarage kan in de toekomst ook ontwikkeld worden. Het daklandschap vormt een ‘tweede maaiveld’ van wonen, met openbare ruimte en voorzieningen.</p>
+    </div>
+    <div class="overview">
+      <img src="img/p6-top.jpg" alt="Isometrie van het daklandschap in de huidige situatie">
+      <img src="img/p6-bottom.jpg" alt="Isometrie van het daklandschap met nieuwe woongemeenschappen">
+    </div>
+  </div>
+
+  <div class="page">
+    <div class="folio"><span>7</span><span>In de binnenstad</span><span>City Deal</span></div>
+    <div class="right">
+      <div class="details">
+        <figure class="detail" style="margin:0"><img src="img/p7-1.jpg" alt=""><figcaption class="cap"><b>1. Makerscollectief</b>De bovenste verdieping van het ondergelegen retailpand staat momenteel leeg. Hier wordt een patio in gemaakt en getransformeerd naar makersruimtes. Het dak wordt ingericht met diverse woningen ontwikkeld door een coöperatief collectief van makers.</figcaption></figure>
+        <figure class="detail" style="margin:0"><img src="img/p7-2.jpg" alt=""><figcaption class="cap"><b>2. Optoppen voor ouderen</b>Op de ondergelegen HEMA ontstaat een collectief woongebouw voor ouderen. De woningen zijn levensloopbestendig en bezitten een collectieve tuin. Er is een buurthuis voor de ouderen om samen te komen.</figcaption></figure>
+        <figure class="detail" style="margin:0"><img src="img/p7-3.jpg" alt=""><figcaption class="cap"><b>3. Verhoogd woonblok</b>Voor ‘jonge blijvers’ is een opgetild woonblok ontworpen. De parkeerplekken eronder blijven bestaan. De ontsluiting van het gebouw ligt aan de buitenzijde wat het gebouw een levendige uitstraling geeft.</figcaption></figure>
+        <figure class="detail" style="margin:0"><img src="img/p7-4.jpg" alt=""><figcaption class="cap"><b>4. Loft voor jong en oud</b>De bovenste verdiepingen van een aantal retailpanden staan nu leeg. We stellen voor ze, vanwege de hoogte, te transformeren tot loftwoningen voor jong en oud. De binnenzijde van het gebouw wordt verwijderd en omgevormd tot groene patio. Zo hebben alle loftwoningen voldoende daglicht.</figcaption></figure>
+        <figure class="detail" style="margin:0"><img src="img/p7-5.jpg" alt=""><figcaption class="cap"><b>5. Potentiële uitbreidingen?</b>De verschillende woongemeenschappen worden via de daken van de parkeergarages met elkaar verbonden. Zo kunnen ze voorzieningen delen. In de toekomst is het goed mogelijk dat er nieuwe woongemeenschappen bij komen.</figcaption></figure>
+        <div class="banner case">Het tweede maaiveld biedt kwalitatieve verblijfsruimte aan de bewoners en bezoekers van de binnenstad.</div>
+      </div>
+      <aside class="strat">
+        <div class="block">Ruimtelijke strategieën</div>
+        <h3 class="big">Wonen op daken</h3>
+        <div class="steps row">
+          <figure><figcaption>0. Geen simpele extrusie van het pand</figcaption><img src="img/p7-s0.jpg" alt=""><div class="mark no" style="text-align:center">×</div></figure>
+          <figure><figcaption>1. Maar, het dak als een tweede maaiveld</figcaption><img src="img/p7-s1.jpg" alt=""></figure>
+          <figure><figcaption>2. Maak het dak publiek toegankelijk</figcaption><img src="img/p7-s2.jpg" alt=""></figure>
+          <figure><figcaption>3. Dubbele functie voor de trappen</figcaption><img src="img/p7-s3.jpg" alt=""></figure>
+          <figure><figcaption>4. Creëer afstand en pleinen</figcaption><img src="img/p7-s4.jpg" alt=""></figure>
+          <figure><figcaption>5. Volg de bestaande bouwstructuur</figcaption><img src="img/p7-s5.jpg" alt=""></figure>
+          <figure><figcaption>6. Verbind met omliggende daken</figcaption><img src="img/p7-s6.jpg" alt=""></figure>
+        </div>
+        <p class="text">Zet daken in als een tweede maaiveld en extrudeer niet zomaar de lagen eronder. Zo ontstaat nieuwe ruimte voor wonen, verblijven en klimaatadaptatie. De trappen kunnen lelijke gevels verbergen en donkere hoekjes activeren. Zorg voor straten en pleinen op de daken met groen en voorzieningen. Plaats de nieuwe bebouwing op het grid van de onderliggende constructie. Veel bestaande panden zijn ontworpen met overmaat en kunnen makkelijk nieuwe lagen dragen.</p>
+      </aside>
+    </div>
+  </div>
+</div>
+
+<!-- ================= PAGE 8 ================= -->
+<section id="realiteit">
+  <div class="folio"><span>Platform Woonopgave</span><span>Goed wonen</span><span>8</span></div>
+  <div class="p8">
+    <aside class="baten">
+      <h2 class="block">Kansen voor alternatieve / overstijgende baten</h2>
+      <div class="list">
+        <div class="baat plain"><div><h3>Alternatieve baten</h3><p>Naast de klassieke opbrengsten van een woonontwikkeling in de vorm van verkoop van woningen aan een koper of belegger, zijn er andere directe en indirecte baten te definiëren.</p></div></div>
+        <div class="baat"><div><h3>1. Algemeen maatschappelijke opbrengsten</h3><p>Volgens onderzoek van Binnenlands Bestuur zijn de maatschappelijke baten van een nieuwbouwwoning in de bestaande stad na vijftig jaar vijf keer zo hoog als de baten van een nieuwbouwwoning in het weiland.</p><p class="bron">bron: <a href="https://www.binnenlandsbestuur.nl/ruimte-en-milieu/binnenstedelijk-bouwen-vijf-keer-zo-profijtelijk">binnenlandsbestuur.nl/ruimte-en-milieu/binnenstedelijk-bouwen-vijf-keer-zo-profijtelijk</a></p></div><img src="img/b-1.png" alt="Grafiek: vijf keer hogere baten"></div>
+        <div class="baat"><div><h3>2. Beheer</h3><p>Nieuwe bewoners leveren de gemeente opbrengsten: ze krijgen meer geld uit het Gemeentefonds en de nieuwe bewoners betalen OZB belasting, afvalstoffenheffing en rioolbelasting. De beheerkosten vanuit de gemeente blijven echter nagenoeg gelijk. Een deel van die baten zou ingezet kunnen worden om de binnenstad te vergroenen.</p></div><img src="img/b-2.png" alt=""></div>
+        <div class="baat"><div><h3>3. Stedelijk groen</h3><p>Volgens onderzoek van het RIVM levert één hectare stedelijk groen tussen de €50.000 en €100.000 aan maatschappelijke baten per jaar op.</p><p class="bron">bron: <a href="https://www.atlasnatuurlijkkapitaal.nl/nieuws/wie-betaalt-rekening-voor-meer-groen">atlasnatuurlijkkapitaal.nl/nieuws/wie-betaalt-rekening-voor-meer-groen</a></p></div><img src="img/b-3.png" alt=""></div>
+        <div class="baat"><div><h3>4. Ouderen langer thuis</h3><p>Een oudere die door een aangepast huis langer thuis kan wonen in goede gezondheid scheelt de overheid €20.000 tot €50.000 per jaar.</p><p class="bron">bron: Publicatie ‘Samen Slim - naar een maatschappelijk investeringsmodel voor gebiedsontwikkeling’, uitgegeven door het Watertorenberaad 2023</p></div><img src="img/b-4.png" alt=""></div>
+        <div class="baat"><div><h3>5. Obesitas en eenzaamheid</h3><p>Obesitas kost de maatschappij momenteel 79 miljard (!) euro per jaar. Dit kan niet 1-op-1 opgelost worden in de woonomgeving, maar een gezonde leefomgeving speelt wel een grote rol. Eenzaamheid kost de maatschappij 2 miljard euro per jaar. Ook hier speelt de directe woon- en leefomgeving een grote rol.</p><p class="bron">bron: analyse Platform Woonopgave</p></div><img src="img/b-5.png" alt=""></div>
+        <div class="baat"><div><h3>6. CO<sub>2</sub> uitstoot</h3><p>Het CO<sub>2</sub> budget voor de woningbouw (om binnen de afspraken van Parijs te blijven), is nagenoeg op. Van een nieuwe woning in bestaand stedelijk gebied is de CO<sub>2</sub> voetafdruk minstens de helft lager, dan van een (duurzaam gebouwde) woning in het weiland. Dit ligt onder andere aan de hoge impact van bijkomende aanleg van wegen.</p><p class="bron">bron: Copper8, LEVS, Metabolic, rapport ‘CO<sub>2</sub> impact van woningbouwlocaties’ voor City Deal Circulair en Conceptueel bouwen, februari 2025</p></div><img src="img/b-6.png" alt=""></div>
+      </div>
+    </aside>
+
+    <article class="realiteit">
+      <h2>Hoe maken we deze projecten een realiteit?</h2>
+      <div class="body">
+        <p>De vraag die naar aanleiding van deze studie direct ter tafel komt is ‘hoe maken we deze projecten realiteit?’. In een praktijk waarin veel gemeenten weinig eigendom in de binnenstad hebben en het private eigendom doorgaans zeer versnipperd is. Omdat de vraag naar wonen lange tijd minder van toepassing was op de binnenstad, ontbreekt vaak een uitgebreide visie op dit gebied. Afhankelijk van de aanwezigheid van wonen in bestemmingsplannen (nu: omgevingsplan) kan het sturen of stimuleren van ontwikkelingen lastig zijn.</p>
+        <p>In overleg met Annius Hoornstra van The Positive Lab, hebben we een aantal punten gedefinieerd die het mogelijk maken om binnen verschillende condities toch te kunnen sturen op de (woon)ontwikkelingen in de binnenstad.</p>
+
+        <h3>1. Definieer potentie en visie</h3>
+        <p>Start met het in beeld brengen van de huidige situatie en mogelijkheden van de binnenstad. Hoeveel winkels staan leeg? Hoeveel kan er maximaal worden toegevoegd en omgezet naar wonen? Welke positieve impact hebben deze toevoegingen op de koopkracht in het gebied? Definieer vervolgens wat je als gemeente wil (dit hoeft zeker niet gelijk te zijn aan het maximum). Dat wordt bepaald door te draaien aan een paar knoppen c.q. antwoord te geven op de volgende vragen: Hoe om te gaan met wonen op daken? Hoe om te gaan met wonen boven winkels of aan de binnenkant van stedelijke blokken? Welke ambities liggen ten grondslag aan een transformatie van kantoor of retail naar wonen? Is er draagvlak om onoverdekte parkeervelden om te zetten naar gebouwd parkeren, met daarboven wonen?</p>
+        <p>De analyse en visie zijn een uitnodiging aan stakeholders om aan de slag te gaan met één of meerdere kansrijke ontwikkellocaties voor woningbouw. De uitnodiging gaat niet alleen over het toevoegen van woningen, maar over het gezamenlijk verbeteren van de vitaliteit van het centrumgebied.</p>
+
+        <h3>2. Stuur pro-actief; neem initiatief op kansrijke locaties</h3>
+        <p>Vaak staat een gemeente 1-0 achter als zij reageren op een initiatief vanuit de markt. De ontwikkelaar heeft al geïnvesteerd met het maken van een eerste planvoorstel en een eerste doorrekening. Wijzigingen kosten de ontwikkelaar dus altijd meer geld en tijd. Stuur daarom pro-actief op de in stap 1 gedefinieerde kansrijke locaties waar nog geen initiatief vanuit de markt is. Zoek daarbij de eigenaren op die bereid zijn in gesprek te gaan en zelf wellicht nog niet weten wat ze met hun (bijvoorbeeld leegstaand) vastgoed kunnen. In samenspraak met de gemeente kan een snel en soepel proces doorlopen worden, wat de ontwikkelkosten en het risico voor de ontwikkelaar verlaagt.</p>
+
+        <h3>3. Breng de (maatschappelijke) meerwaarde in beeld</h3>
+        <p>Het denken over maatschappelijke meerwaarde overstijgt de kosten die normaal bij een projectontwikkeling worden meegenomen. De klassieke ‘gebiedsexploitatie’ beperkt zich immers tot de directe kosten en opbrengsten van de ontwikkeling. Er zijn echter veel meer kosten en opbrengsten als gevolg van ontwikkelingen in de binnenstad; zo levert elke extra bewoner in de binnenstad directe inkomsten op vanuit het gemeentefonds en betalen de nieuwe bewoners OZB, afvalstoffenheffing en rioolbelasting. Daartegenover staan zeer beperkte kosten voor de gemeente, omdat de openbare ruimte en voorzieningen er grotendeels al zijn en ook de beheerkosten weinig zullen toenemen (in vergelijking met nieuwbouwlocaties aan de rand van de stad). Meer bewoners betekent ook meer omzet voor winkeliers, meer parkeeropbrengsten enzovoort. Dit zijn inkomsten die betrokkenen (ten dele) kunnen inzetten om de binnenstad tot een prettiger verblijfsgebied en klimaatadaptieve plek te maken.</p>
+        <p>Deze impact kan nog worden vergroot, maar hoeft niet, door ook te sturen op andere effecten, zoals het versterken van de klimaatbestendigheid door bijvoorbeeld te vergroenen. Of het reduceren van zorgkosten door met nieuwbouw te stimuleren dat mensen en bedrijven meer voor elkaar zorgen. Een ouder persoon die een jaar langer thuis kan blijven wonen ‘scheelt’ €20.000 - €50.000 en het huisvesten van iemand uit een kwetsbare doelgroep die anders mogelijk op straat zou belanden, levert nog grotere besparingen op (meer dan de kosten van de huisvesting). Identificeer de belangrijkste baathouders als het gaat om werkelijke en wezenlijke geldstromen.</p>
+
+        <h3>4. Nodig alle baathouders &amp; stakeholders aan tafel uit</h3>
+        <p>Nodig de baathouders en stakeholders, die vanuit punt 3 geformuleerd zijn, uit aan tafel. Het is mogelijk dat baathouders uit een onverwachte hoek komen. Zo kan het waterschap of het drinkwaterbedrijf ook baat hebben bij bepaalde ingrepen binnen de planvorming van het project. Denk aan het bufferen van regenwater of drinkwaterbesparende ingrepen (het aanboren van nieuwe drinkwaterbronnen is zeer kostbaar).</p>
+        <p>Wellicht zijn baathouders geïnteresseerd om mee te investeren in bijvoorbeeld de waterbuffer als onderdeel van de openbare ruimte. Het is ook mogelijk dat een gemeente, de sector Maatschappelijke Ontwikkeling en Stadsontwikkeling, als huurder/afnemer optreedt om een deel van de nieuwe woningen af te nemen voor kwetsbare doelgroepen. Dit scheelt de gemeente veel kosten en neemt een deel van het ontwikkelrisico weg bij de ontwikkelaar.</p>
+
+        <h3>5. Maak nieuwe coalities</h3>
+        <p>Tenslotte is het mogelijk om nieuwe coalities te creëren in de binnenstad. In Amsterdam is in de jaren ’80 de N.V. Zeedijk opgericht. Dit was een samenwerking tussen de ondernemersvereniging en de gemeente om bewust panden op te kopen ter verbetering van het gebied rondom de Zeedijk dat op dat moment zeer in verval was geraakt. Tot op heden is het succesvol gebleken. In een gebied met versnipperd eigendom kunnen dit soort samenwerkingen, vanuit een collectieve visie om de binnenstad te verbeteren, helpen alle neuzen dezelfde kant op te krijgen. Immers, alle ondernemers zijn gebaat bij het eindresultaat van een bruisende levendige binnenstad.</p>
+
+        <h3>6. Ondersteun de investeringscoalitie door bijpassend financieringsmodel</h3>
+        <p>Op het moment dat duidelijk is wie de investeringen gaan doen en hoe hun geldstromen lopen, wordt ook duidelijk of er een financieringsvraag is op te lossen. Dat is aan de orde als er gezamenlijke plankosten zijn die nog niet ondergebracht kunnen worden bij een concrete investering. Of als er investeringen vroeg in het proces liggen (en de opbrengsten pas later) en er risico’s moeten worden afgedekt om de kansrijkheid te vergroten.</p>
+        <p>Investeren in het toevoegen van woningen in een centrum vergroot de vitaliteit en de koopkracht. Het biedt een aanknopingspunt voor ruilverkaveling, voor het verplaatsen en concentreren van winkels en in de programmering van deze woningen liggen kansen voor het oplossen van maatschappelijke opgaven tot en met het huisvesten van personeel. Met andere woorden; er liggen veel kansen die nodig zullen zijn om een taaie, maar kansrijke opgave succesvol op te pakken!</p>
+      </div>
+    </article>
+  </div>
+</section>
+
+<footer class="end"><span>Platform Woonopgave × City Deal Dynamische Binnensteden</span><span class="g">#hoekanhetwel</span></footer>
+</main>
+
+<script>
+  // Scale the cover words so each line fills the column, like the printed masthead.
+  function fitTitles() {
+    const box = document.querySelector('.cover-title');
+    const W = box.clientWidth;
+    document.querySelectorAll('.fit').forEach(el => {
+      el.style.fontSize = '100px';
+      const w = el.offsetWidth;
+      el.style.fontSize = (100 * W / w * 0.995) + 'px';
+    });
+  }
+  (document.fonts ? document.fonts.ready : Promise.resolve()).then(fitTitles);
+  fitTitles();
+  addEventListener('resize', fitTitles);
+</script>
+
+</body></html>

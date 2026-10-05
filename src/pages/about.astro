@@ -1,0 +1,60 @@
+---
+/* About — text, facts, and team photos that float next to the cursor (BASE: don't change unless asked). */
+import Base from "../layouts/Base.astro";
+import SITE from "../../content.js";
+import { href } from "../lib/url.js";
+
+const a = SITE.about;
+const TEAM = SITE.team || {};
+// In the "Team" row, names listed in content.js → team get a photo.
+const teamNames = html => Object.entries(TEAM).reduce((h, [name, photo]) =>
+  h.split(name).join(`<span class="person" data-photo="${href(photo)}" tabindex="0">${name}</span>`), html);
+---
+<Base tab="about" title="Over ons">
+  <div class="text" id="about">
+    <h1 set:html={a.heading} />
+    {a.text.map(t => <p set:html={t} />)}
+    <dl class="rows">
+      {a.facts.map(([k, v]) => <div><dt>{k}</dt><dd set:html={k === "Team" ? teamNames(v) : v} /></div>)}
+    </dl>
+  </div>
+  <img class="person-photo" id="person-photo" alt="" hidden>
+</Base>
+
+<script>
+  // Mouse: the photo follows the cursor. Touch: tap a name to show / hide. Keyboard: on focus.
+  const view = document.getElementById("about")!;
+  const float = document.getElementById("person-photo") as HTMLImageElement;
+  const broken = new Set<string>();
+
+  function show(el: HTMLElement, x: number, y: number) {
+    const src = el.dataset.photo!;
+    if (broken.has(src)) return;
+    if (float.getAttribute("src") !== src) {
+      float.onerror = () => { broken.add(src); float.hidden = true; };
+      float.src = src;
+    }
+    float.hidden = false;
+    move(x, y);
+  }
+  function move(x: number, y: number) {
+    const w = float.offsetWidth || 240, h = float.offsetHeight || 300;
+    const left = x + 24 + w > innerWidth ? x - 24 - w : x + 24;
+    float.style.left = Math.max(8, left) + "px";
+    float.style.top = Math.min(innerHeight - h - 8, Math.max(8, y - h / 2)) + "px";
+  }
+  const hide = () => { float.hidden = true; };
+  const person = (t: EventTarget | null) => (t as HTMLElement | null)?.closest?.<HTMLElement>(".person");
+
+  view.addEventListener("pointerover", e => { const p = person(e.target); if (p && e.pointerType === "mouse") show(p, e.clientX, e.clientY); });
+  view.addEventListener("pointermove", e => { if (!float.hidden && e.pointerType === "mouse" && person(e.target)) move(e.clientX, e.clientY); });
+  view.addEventListener("pointerout", e => { if (e.pointerType === "mouse" && person(e.target) && !person(e.relatedTarget)) hide(); });
+  document.addEventListener("click", e => {
+    const p = person(e.target);
+    if (!p) return hide();
+    if (float.hidden) { const r = p.getBoundingClientRect(); show(p, r.left, r.top + r.height / 2); } else hide();
+  });
+  view.addEventListener("focusin", e => { const p = person(e.target); if (p) { const r = p.getBoundingClientRect(); show(p, r.right, r.top + r.height / 2); } });
+  view.addEventListener("focusout", hide);
+  addEventListener("scroll", hide, { passive: true });
+</script>
