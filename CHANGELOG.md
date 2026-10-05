@@ -2,6 +2,12 @@
 
 Newest first. Every change to the site gets an entry.
 
+## 2026-10-05 — BASE CHANGE: shared reset.css with common utilities
+
+- New file: `base/reset.css` — consolidated common styles from across projects: safe-area insets, box-sizing reset, focus-visible defaults, reduced-motion support, and font-smoothing. Projects can optionally link it with `<link rel="stylesheet" href="../../base/reset.css">`.
+- Updated: `projects/_template/index.html` — added optional reset.css link (can be removed if it conflicts with project design).
+- Updated: `CLAUDE.md` — documented reset.css in the base files section and project setup guide.
+
 ## 2026-10-01 — BASE CHANGE (requested by Kaan): black logo and site, filters behind one button
 
 - Changed: `index.html` — removed the random visit colour; the site is black and white. Versions bumped to `?v=2026-10-01i`.

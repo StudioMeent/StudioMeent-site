@@ -6,6 +6,7 @@
 <title>Beter benutten bestaande rijtjeswoningen</title>
 <!-- Back to Studio Meent (base/back-button.js) -->
 <script src="../../base/back-button.js" data-position="top-left" defer></script>
+<link rel="stylesheet" href="../../base/reset.css">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Work+Sans:wght@400;500;700;800&display=swap" rel="stylesheet">
@@ -28,17 +29,9 @@
   }
   :root[data-theme="dark"] { --bg: #5bb95b; }
 
-  :root {
-    box-sizing: border-box;
-    padding-top: env(safe-area-inset-top, 0px);
-    padding-bottom: env(safe-area-inset-bottom, 0px);
-  }
-  html { scroll-padding-top: env(safe-area-inset-top, 0px); }
-  *, *::before, *::after { box-sizing: inherit; }
   body {
-    margin: 0; background: var(--bg); color: var(--ink);
+    background: var(--bg); color: var(--ink);
     font-family: var(--font); font-size: 16px; line-height: 1.5;
-    -webkit-font-smoothing: antialiased;
   }
   a { color: inherit; }
   :focus-visible { outline: 2px solid #fff; outline-offset: 3px; }

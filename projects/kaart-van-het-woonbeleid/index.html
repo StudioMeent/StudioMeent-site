@@ -7,20 +7,17 @@
 <title>Kaart van het Woonbeleid</title>
 <!-- Back to Studio Meent (base/back-button.js) -->
 <script src="../../base/back-button.js" data-position="top-left" data-info="bottom-right" data-info-phone="top-left" defer></script>
+<link rel="stylesheet" href="../../base/reset.css">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Work+Sans:wght@400;500;700;800&display=swap" rel="stylesheet">
 <style>
 :root{
   --map:#F1F1F1; --outside:#FFFFFF; --ink:#231F20; --paper:#FFFFFF; --green:#31963D; --soft:#6C6869;
-  box-sizing:border-box;
-  padding-top:env(safe-area-inset-top,0px);
-  padding-bottom:env(safe-area-inset-bottom,0px);
 }
-html{ height:100%; background:#FFFFFF; color-scheme:light; scroll-padding-top:env(safe-area-inset-top,0px); }
-body{ height:100%; margin:0; background:var(--outside); color:var(--ink); overflow:hidden;
-  font-family:"Work Sans", "Helvetica Neue", Arial, sans-serif; -webkit-font-smoothing:antialiased; }
-*,*::before,*::after{ box-sizing:inherit; }
+html{ height:100%; background:#FFFFFF; color-scheme:light; }
+body{ height:100%; background:var(--outside); color:var(--ink); overflow:hidden;
+  font-family:"Work Sans", "Helvetica Neue", Arial, sans-serif; }
 canvas{ position:fixed; inset:0; width:100%; height:100%; display:block; touch-action:none; cursor:grab; }
 canvas.dragging{ cursor:grabbing; }
 button{ font:inherit; color:inherit; }

@@ -10,7 +10,7 @@ Studio Meent is an architecture research office. The website has a fixed **base*
 
 | Zone | Files | Rule |
 |---|---|---|
-| **Base** | `index.html`, `base/` (style.css, app.js, back-button.js, images/), `build.js` | **Never change unless Kaan explicitly asks for a base change.** |
+| **Base** | `index.html`, `base/` (style.css, app.js, back-button.js, reset.css, images/), `build.js` | **Never change unless Kaan explicitly asks for a base change.** |
 | **Site texts** | `content.js` (news, about, contact, filter words, featured projects) | Change only when asked to edit those texts. |
 | **Projects** | `projects/<folder>/` | Where almost all work happens. One folder per project. |
 
@@ -44,6 +44,7 @@ projects/my-project/          ← lowercase, hyphens, no spaces or numbers-with-
 - `index.html` **must** load the back button in its `<head>`:
   `<script src="../../base/back-button.js" data-position="bottom-left" defer></script>`
   Choose the corner (`bottom-left`, `bottom-right`, `top-left`, `top-right`) so it doesn't collide with the project's own fixed/sticky elements.
+- Optionally link `base/reset.css` for shared utilities: `<link rel="stylesheet" href="../../base/reset.css">`. Provides safe-area insets, box-sizing, and accessibility defaults. Remove if it conflicts with your design.
 - The same script shows the floating **info box** (year, client, place, categories, downloads) in `data-info="top-right"` (default; also the other corners, or `none`). It reads `info.json` through `projects/projects.js`, so run `node build.js` after changing it.
   - `color`: text and frame colour of the info box — use the project's main colour (e.g. `"#1f9945"`).
   - `downloads`: `[{ "label": "Volledig boek (PDF)", "file": "boek.pdf" }]` — files inside the project folder.

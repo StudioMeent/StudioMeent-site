@@ -20,6 +20,7 @@
 <title>De toekomst is al gebouwd! — Dutch Design Week 2025</title>
 <!-- Back to Studio Meent (base/back-button.js) -->
 <script src="../../base/back-button.js" data-position="top-left" defer></script>
+<link rel="stylesheet" href="../../base/reset.css">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Work+Sans:wght@500;600;700;900&display=swap" rel="stylesheet">
@@ -38,15 +39,9 @@
     --font:"Work Sans", "Helvetica Neue", Arial, sans-serif;
     --gutter:clamp(20px, 4vw, 56px);
     --strip:64px;          /* height of the overview strip */
-    
-    box-sizing:border-box;
-    padding-top:env(safe-area-inset-top,0px);
-    padding-bottom:env(safe-area-inset-bottom,0px);
   }
-  *,*::before,*::after{box-sizing:inherit}
-  html{scroll-padding-top:env(safe-area-inset-top,0px)}
-  body{margin:0;background:var(--paper);color:var(--ink);font-family:var(--font);
-       font-size:18px;line-height:1.5;-webkit-font-smoothing:antialiased}
+  body{background:var(--paper);color:var(--ink);font-family:var(--font);
+       font-size:18px;line-height:1.5}
   a{color:inherit}
   a:focus-visible,button:focus-visible,[tabindex]:focus-visible{outline:2px solid var(--pink);outline-offset:3px}
 

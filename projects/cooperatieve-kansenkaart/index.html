@@ -6,6 +6,7 @@
 <title>Coöperatieve Kansenkaart</title>
 <!-- Back to Studio Meent (base/back-button.js) -->
 <script src="../../base/back-button.js" data-position="top-left" defer></script>
+<link rel="stylesheet" href="../../base/reset.css">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Work+Sans:wght@400;500;700;800&display=swap" rel="stylesheet">
@@ -687,13 +688,9 @@ svg.leaflet-image-layer.leaflet-interactive path {
   --gutter:clamp(16px,3vw,32px);
   --font:"Work Sans",system-ui,-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
   color-scheme:light;
-  box-sizing:border-box;
-  padding-top:env(safe-area-inset-top,0px);
-  padding-bottom:env(safe-area-inset-bottom,0px);
 }
-*,*::before,*::after{box-sizing:inherit}
-html{scroll-padding-top:env(safe-area-inset-top,0px);scroll-behavior:smooth}
-body{margin:0;font-family:var(--font);color:var(--ink);background:var(--paper);-webkit-font-smoothing:antialiased}
+html{scroll-behavior:smooth}
+body{font-family:var(--font);color:var(--ink);background:var(--paper)}
 button{font:inherit;color:inherit}
 a{color:inherit}
 img{display:block}
