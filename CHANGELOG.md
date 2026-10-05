@@ -2,6 +2,32 @@
 
 Newest first. Every change to the site gets an entry.
 
+## 2026-10-05 — BASE CHANGE (requested by Kaan): news as markdown files (Astro content collection)
+
+- New: `src/content/news/*.md` — the six news items, one file each (same titles, dates, texts, images and links; "controleer" kept as a comment after the date). File names = the existing page addresses, so no URLs changed.
+- New: `src/content.config.js` — defines the `news` collection and its fields.
+- New: `tsconfig.json` — Astro's standard settings, so the editor understands `.astro` files.
+- Changed: `src/content.js` — `news` removed (moved to the markdown files); comments updated.
+- Changed: `src/lib/site.js` — `getNews()` (newest first, by date) and `formatDate()` replace the old news list.
+- Changed: `src/pages/news/index.astro`, `src/pages/news/[slug].astro`, `src/pages/index.astro` — read the collection.
+- Changed: `README.md` (how to add news), `CLAUDE.md`.
+- News is now sorted by `date` instead of by position in the file.
+
+## 2026-10-05 — BASE CHANGE (requested by Kaan): site rebuilt with Astro
+
+- New: `package.json`, `package-lock.json`, `astro.config.mjs` — Astro 7. Preview with `npm run dev`, build with `npm run build` (output in `dist/`).
+- New: `src/layouts/Base.astro` (logo, tabs, head), `src/pages/index.astro` (Werk + filter), `src/pages/news/index.astro`, `src/pages/news/[slug].astro` (one page per news item), `src/pages/about.astro`, `src/pages/contact.astro`.
+- New: `src/lib/projects.js` — reads and checks the project folders (same checks, warnings and errors as the old `build.js`); `src/lib/site.js` — paths and news page names.
+- New: `src/pages/projects/projects.js.js` — makes `/projects/projects.js` at build time for the back button's info box.
+- Removed: `index.html`, `base/app.js`, `build.js` (replaced by the files above), `projects/projects.js` (now generated, not committed).
+- Moved: `projects/` → `public/projects/`, `news/` → `public/news/`, `base/` → `public/base/`, `base/style.css` → `src/styles/style.css`, `content.js` → `src/content.js` (now `export const SITE`).
+- Changed: `src/styles/style.css` — one `[hidden]` rule so hidden tiles and the filter hide properly.
+- Changed: `public/base/back-button.js`, `public/projects/_template/index.html` — comments only (`build.js` → Astro build).
+- Changed: `README.md`, `CLAUDE.md`, `.gitignore` (`dist/`, `.astro/`).
+- Werk, Nieuws, Over ons and Contact are now real pages (`/`, `/news/`, `/about/`, `/contact/`) instead of `#news` etc. Old links (`index.html#news`, `#news-2`, `#about`, `#contact`) redirect to the new pages.
+- Without JavaScript all pages still show; only the filter, the copy button and the team photo need it.
+- Projects and news folders: not changed (only moved).
+
 ## 2026-10-05 — BASE CHANGE: shared reset.css with common utilities
 
 - New file: `base/reset.css` — consolidated common styles from across projects: safe-area insets, box-sizing reset, focus-visible defaults, reduced-motion support, and font-smoothing. Projects can optionally link it with `<link rel="stylesheet" href="../../base/reset.css">`.

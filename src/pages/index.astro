@@ -1,0 +1,84 @@
+---
+import Base from "../layouts/Base.astro";
+import { SITE } from "../content.js";
+import { getProjects } from "../lib/projects.js";
+import { url, getNews } from "../lib/site.js";
+
+const projects = getProjects();
+const news = await getNews();
+const used = SITE.categories.filter(c => projects.some(p => p.categories.includes(c)));
+
+// Old links used #news, #news-2, #about, #contact on this page; send them to the new pages.
+const redirects = {
+  news: url("news/"),
+  about: url("about/"),
+  contact: url("contact/"),
+  ...Object.fromEntries(news.map((n, i) => [`news-${i}`, url(`news/${n.id}/`)])),
+};
+---
+<Base tab="works">
+  <script slot="head" is:inline define:vars={{ redirects }}>
+    var to = redirects[location.hash.slice(1)];
+    if (to) location.replace(to);
+  </script>
+
+  {used.length > 1 && (
+    <div class="filters" hidden>
+      <button type="button" class="toggle" aria-expanded="false" aria-controls="filter-options">Filter +</button>
+      <button type="button" class="clear" data-cat="" aria-label="Filter wissen" hidden>×</button>
+      <div class="options" id="filter-options" role="group" aria-label="Filter" hidden>
+        <button type="button" aria-pressed="true" data-cat="">Alles</button>
+        {used.map(c => <button type="button" aria-pressed="false" data-cat={c}>{c}</button>)}
+      </div>
+    </div>
+  )}
+
+  {projects.length ? (
+    <div class="grid">
+      {projects.map(p => (
+        <a class="tile" href={url(p.url)} data-cats={JSON.stringify(p.categories)}>
+          <span class="frame"><img src={url(p.thumbnail)} alt="" loading="lazy"></span>
+          <span class="caption"><b>{p.title}</b><br><span>{[p.place, p.year].filter(Boolean).join(", ")}</span></span>
+        </a>
+      ))}
+    </div>
+  ) : null}
+  <p class="empty" hidden={projects.length > 0}>{projects.length ? "Nog geen projecten in deze categorie." : "Nog geen projecten."}</p>
+</Base>
+
+<script>
+  // Without JavaScript all projects show and the filter stays hidden.
+  const box = document.querySelector<HTMLElement>(".filters");
+  if (box) {
+    const toggle = box.querySelector<HTMLButtonElement>(".toggle")!;
+    const clear = box.querySelector<HTMLButtonElement>(".clear")!;
+    const options = box.querySelector<HTMLElement>(".options")!;
+    const tiles = [...document.querySelectorAll<HTMLElement>(".tile")];
+    const empty = document.querySelector<HTMLElement>(".empty")!;
+    let filter = "", open = false;
+
+    const render = () => {
+      toggle.textContent = open ? "Filter −" : filter ? `Filter: ${filter}` : "Filter +";
+      toggle.setAttribute("aria-expanded", String(open));
+      options.hidden = !open;
+      clear.hidden = !filter || open;
+      options.querySelectorAll<HTMLButtonElement>("[data-cat]").forEach(b => b.setAttribute("aria-pressed", String(b.dataset.cat === filter)));
+      let shown = 0;
+      for (const t of tiles) {
+        const on = !filter || JSON.parse(t.dataset.cats!).includes(filter);
+        t.hidden = !on;
+        if (on) shown++;
+      }
+      empty.hidden = shown > 0;
+    };
+
+    toggle.addEventListener("click", () => { open = !open; render(); });
+    box.querySelectorAll<HTMLButtonElement>("[data-cat]").forEach(b => b.addEventListener("click", () => {
+      filter = b.dataset.cat || "";
+      open = false;   // choosing a filter folds the list closed again
+      render();
+      toggle.focus();
+    }));
+    box.hidden = false;
+  }
+</script>

@@ -1,0 +1,22 @@
+---
+import { render } from "astro:content";
+import Base from "../../layouts/Base.astro";
+import { url, getNews, formatDate } from "../../lib/site.js";
+
+const news = await Promise.all((await getNews()).map(async n => ({ n, Content: (await render(n)).Content })));
+---
+<Base tab="news" title="Nieuws">
+  <div class="blog">
+    {news.map(({ n, Content }) => (
+      <article class="post">
+        <time datetime={n.data.date.toISOString().slice(0, 10)}>{formatDate(n.data.date)}</time>
+        <div>
+          <h2><a href={url(`news/${n.id}/`)}>{n.data.title}</a></h2>
+          <Content />
+          {n.data.link && <a class="more" href={url(n.data.link)}>{n.data.linkLabel || "Bekijk het project →"}</a>}
+        </div>
+        {n.data.image && <figure><img src={url(n.data.image)} alt="" loading="lazy"></figure>}
+      </article>
+    ))}
+  </div>
+</Base>

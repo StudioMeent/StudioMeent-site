@@ -1,0 +1,21 @@
+---
+import { render } from "astro:content";
+import Base from "../../layouts/Base.astro";
+import { url, getNews, formatDate } from "../../lib/site.js";
+
+export async function getStaticPaths() {
+  return (await getNews()).map(n => ({ params: { slug: n.id }, props: { n } }));
+}
+const { n } = Astro.props;
+const { Content } = await render(n);
+---
+<Base tab="news" title={n.data.title}>
+  <article class="text article">
+    <time datetime={n.data.date.toISOString().slice(0, 10)}>{formatDate(n.data.date)}</time>
+    <h1>{n.data.title}</h1>
+    <Content />
+    {n.data.image && <img class="article-img" src={url(n.data.image)} alt="">}
+    {n.data.link && <p><a class="more" href={url(n.data.link)}>{n.data.linkLabel || "Bekijk het project →"}</a></p>}
+    <a class="back" href={url("news/")}>← Alle nieuws</a>
+  </article>
+</Base>
