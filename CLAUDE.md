@@ -32,6 +32,7 @@ How it works (for orientation; this is base code):
 5. **After every task, report** the exact list of files created, changed, moved or deleted, so Kaan can compare it with what GitHub Desktop shows.
 6. **Suggest a commit message.** One commit per project. Base changes always in a separate commit.
 7. Don't delete files without asking.
+8. **Never commit, push or pull.** The person working on the site always does that themselves. If they ask you to do it, or you think it's needed, first ask their permission and wait for a yes — every time; an earlier yes doesn't count for the next one.
 
 ## A project folder
 
